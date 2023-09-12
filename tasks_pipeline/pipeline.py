@@ -5,6 +5,7 @@ from contextlib import suppress
 import os
 import yaml
 import importlib
+import sys
 
 from .tasks import TaskStatus
 
@@ -170,6 +171,10 @@ def tasks_apply(task, f):
 
 
 async def main():
+    if len(sys.argv) < 2:
+        print(f'usage: tasks_pipeline configFile')
+        return
+
     stdscr = curses.initscr()
     curses.noecho()
     curses.cbreak()
@@ -179,7 +184,7 @@ async def main():
     curses.use_default_colors()
     curses.curs_set(0)
 
-    with open(os.path.join(os.path.split(os.path.realpath(__file__))[0], 'config.yaml'), 'rb') as f:
+    with open(sys.argv[1], 'rb') as f:
         task = yaml.safe_load(f.read().decode('utf-8'))['tasks']
 
     def add_default_name(task):
