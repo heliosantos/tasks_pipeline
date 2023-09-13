@@ -6,6 +6,12 @@ import yaml
 import importlib
 import sys
 
+try:
+    import win11toast
+    toastAvailable = True
+except ModuleNotFoundError:
+    toastAvailable = False
+
 from .tasks import TaskStatus
 
 
@@ -222,6 +228,11 @@ async def main():
 
     async def start_tasks():
         await rootTask['instance'].run()
+        if toastAvailable and config.get('systemNotification', True):
+            win11toast.notify(
+                title,
+                'All tasks completed',
+            )
 
     asyncio.create_task(display(stdscr, rootTask, title))
     await process_input(stdscr, cancel_task, cancel_all_tasks, start_tasks)
