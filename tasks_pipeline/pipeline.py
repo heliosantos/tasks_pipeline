@@ -2,7 +2,6 @@ import asyncio
 import curses
 import datetime
 from contextlib import suppress
-import os
 import yaml
 import importlib
 import sys
@@ -39,7 +38,7 @@ def get_color(r, g, b):
     return curses.color_pair(colorCounter)
 
 
-async def display(stdscr, rootTask):
+async def display(stdscr, rootTask, title):
     tasks = flatten_tasks(rootTask)
     add_display_info(rootTask)
 
@@ -52,13 +51,13 @@ async def display(stdscr, rootTask):
     c_orange = get_color(255, 165, 0)
     # c_light = get_color(240, 240, 240)
 
-    stdscr.addstr(1, 3, 'Tasks Pipeline', c_gray)
+    stdscr.addstr(1, 3, title, c_gray)
     stdscr.addstr(4 + len(tasks) + 1, 3, '[S] Start, [N] Next Task, [C] Cancel all Tasks, [X] exit', c_gray)
 
     for i, task in enumerate(tasks):
         task['win'] = curses.newwin(1, width - 1 - 3, i + 4, 3)
 
-    nameLen = min(max(len(t['displayInfo']) for t in tasks), 20)
+    nameLen = min(max(len(t['displayPrefix'] + t['name']) for t in tasks), 20)
     elapsedLen = 8
     statusLen = 20
     msgLen = width - nameLen - elapsedLen - statusLen - 9
@@ -85,15 +84,17 @@ async def display(stdscr, rootTask):
 
             task['win'].clear()
 
-            rowLen = 0
+            dp = task['displayPrefix']
+            fn = trim_text(dp + task['name'], nameLen).removeprefix(dp)
+
             for t, c in (
-                (trim_text(task['displayInfo'], nameLen), taskColor),
-                (trim_text(str(elapsed).split('.')[0], elapsedLen), c_lightgray),
-                (trim_text(taskInstance.status, statusLen), c_orange),
-                (trim_text(taskInstance.message, msgLen), c_lightgray)
+                (dp, c_gray),
+                (fn + ' ', taskColor),
+                (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
+                (trim_text(taskInstance.status + ' ', statusLen), c_orange),
+                (trim_text(taskInstance.message + ' ', msgLen), c_lightgray)
             ):
-                rowLen += len(t) + 1
-                task['win'].addstr(t + ' ', c)
+                task['win'].addstr(t, c)
 
             task['win'].refresh()
 
@@ -145,8 +146,7 @@ def add_display_info(node, level=0, parentPrefix='', lastChild=True):
         prefix = parentPrefix + ('└' if lastChild else '├')
         childrenPrefix = parentPrefix + (' ' if lastChild else '│')
 
-    prefix += node['name']
-    node['displayInfo'] = prefix
+    node['displayPrefix'] = prefix
 
     children = node.get('tasks', [])
 
@@ -172,7 +172,7 @@ def tasks_apply(task, f):
 
 async def main():
     if len(sys.argv) < 2:
-        print(f'usage: tasks_pipeline configFile')
+        print('usage: tasks_pipeline configFile')
         return
 
     stdscr = curses.initscr()
@@ -185,7 +185,10 @@ async def main():
     curses.curs_set(0)
 
     with open(sys.argv[1], 'rb') as f:
-        task = yaml.safe_load(f.read().decode('utf-8'))['tasks']
+        config = yaml.safe_load(f.read().decode('utf-8'))
+
+    rootTask = config['rootTask']
+    title = config.get('title', 'Tasks Pipeline')
 
     def add_default_name(task):
         defaultNames = {
@@ -195,9 +198,9 @@ async def main():
         if not task.get('name'):
             task['name'] = defaultNames.get(task['type'], task['type'])
 
-    tasks_apply(task, add_default_name)
+    tasks_apply(rootTask, add_default_name)
 
-    instanciate_tasks(task)
+    instanciate_tasks(rootTask)
 
     cancelAllTasks = False
 
@@ -214,13 +217,13 @@ async def main():
             if instance.operatingStatus == TaskStatus.RUNNING:
                 futures.append(instance.cancel())
 
-        tasks_apply(task, cancel)
+        tasks_apply(rootTask, cancel)
         await asyncio.gather(*futures)
 
     async def start_tasks():
-        await task['instance'].run()
+        await rootTask['instance'].run()
 
-    asyncio.create_task(display(stdscr, task))
+    asyncio.create_task(display(stdscr, rootTask, title))
     await process_input(stdscr, cancel_task, cancel_all_tasks, start_tasks)
 
     curses.nocbreak()
