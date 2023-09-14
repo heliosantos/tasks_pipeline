@@ -6,59 +6,18 @@ rootTask:
     - type: WaitForTask
       name: Wait1
       params:
-        - 15
+        waitFor: 5
     - type: WaitForTask
       name: Wait2
       params:
-        - 10
+        waitFor: 10
     - type: SequentialTask
       tasks:
         - type: WaitForTask
           name: Wait1
           params:
-            - 5
+            waitFor: 5
         - type: WaitForTask
           name: Wait2
           params:
-            - 10
-        - type: SequentialTask
-          tasks:
-            - type: WaitForTask
-              name: Wait1
-              params:
-                - 5
-            - type: WaitForTask
-              name: Wait2
-              params:
-                - 10
-
-    - type: ParallelTask
-      tasks:
-        - type: WaitForTask
-          name: Wait1
-          params:
-            - 15
-        - type: WaitForTask
-          name: Wait2
-          params:
-            - 10
-        - type: SequentialTask
-          tasks:
-            - type: WaitForTask
-              name: Wait1
-              params:
-                - 5
-            - type: WaitForTask
-              name: Wait2
-              params:
-                - 10
-            - type: SequentialTask
-              tasks:
-                - type: WaitForTask
-                  name: Wait1
-                  params:
-                    - 5
-                - type: WaitForTask
-                  name: Wait2
-                  params:
-                    - 10
+            waitFor: 10

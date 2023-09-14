@@ -133,7 +133,7 @@ def instanciate_tasks(task):
     mod = importlib.import_module(mod)
     cls = getattr(mod, cls)
 
-    task['instance'] = cls(task['name'], *task.get('params', []))
+    task['instance'] = cls(task['name'], **task.get('params', {}))
 
     for child in task.get('tasks', []):
         instanciate_tasks(child)
