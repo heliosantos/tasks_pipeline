@@ -65,7 +65,7 @@ async def display(stdscr, rootTask, title):
 
     nameLen = min(max(len(t['displayPrefix'] + t['name']) for t in tasks), 20)
     elapsedLen = 8
-    statusLen = 20
+    statusLen = 12
     msgLen = width - nameLen - elapsedLen - statusLen - 9
 
     stdscr.addstr(3, 3,
@@ -83,9 +83,9 @@ async def display(stdscr, rootTask, title):
             now = datetime.datetime.now()
             elapsed = (taskInstance.stopTime or now) - (taskInstance.startTime or now)
 
-            taskColor = (c_gray if taskInstance.operatingStatus == TaskStatus.NOT_STARTED else
-                         c_lightgray if taskInstance.operatingStatus == TaskStatus.RUNNING else
-                         c_green if taskInstance.operatingStatus == TaskStatus.COMPLETED else
+            taskColor = (c_gray if taskInstance.status == TaskStatus.NOT_STARTED else
+                         c_lightgray if taskInstance.status == TaskStatus.RUNNING else
+                         c_green if taskInstance.status == TaskStatus.COMPLETED else
                          c_red)
 
             task['win'].clear()
@@ -97,7 +97,7 @@ async def display(stdscr, rootTask, title):
                 (dp, c_gray),
                 (fn + ' ', taskColor),
                 (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
-                (trim_text(taskInstance.status + ' ', statusLen), c_orange),
+                (trim_text(taskInstance.status.name + ' ', statusLen), c_orange),
                 (trim_text(taskInstance.message + ' ', msgLen), c_lightgray)
             ):
                 task['win'].addstr(t, c)
@@ -220,7 +220,7 @@ async def main():
 
         def cancel(task):
             instance = task['instance']
-            if instance.operatingStatus == TaskStatus.RUNNING:
+            if instance.status == TaskStatus.RUNNING:
                 futures.append(instance.cancel())
 
         tasks_apply(rootTask, cancel)

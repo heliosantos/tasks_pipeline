@@ -9,7 +9,6 @@ class WaitTask(BaseTask):
 
     def __init__(self, name, waitUntil: datetime.datetime = None, waitFor: datetime.timedelta = None):
         super().__init__(name)
-        self.status = 'not started'
         self.waitUntil = waitUntil
         self.waitFor = waitFor
 
@@ -20,18 +19,16 @@ class WaitTask(BaseTask):
             self.waitUntil = datetime.datetime.now() + self.waitFor
 
         while self.waitUntil > datetime.datetime.now():
-            if self.operatingStatus == TaskStatus.CANCELLED:
+            if self.status == TaskStatus.CANCELLED:
                 break
             elapsed = self.waitUntil - datetime.datetime.now()
-            self.status = 'remaining: ' + str(elapsed).split('.')[0]
+            self.message = 'remaining: ' + str(elapsed).split('.')[0]
             await asyncio.sleep(0.1)
         else:
             await super().complete()
-            self.status = 'completed'
 
     async def cancel(self):
         await super().cancel()
-        self.status = 'cancelled'
 
 
 class WaitUntilTask(WaitTask):
