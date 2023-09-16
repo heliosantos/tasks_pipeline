@@ -1,0 +1,15 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+  type: ParallelTask
+  tasks:
+    - type: RunProcessTask
+      name: timeout
+      params:
+        cmd: timeout 3
+        expectedOutput: ok
+    - type: RunProcessTask
+      name: timeout
+      params:
+        cmd: timeout 3
+        

@@ -1,4 +1,5 @@
 from .base_task import BaseTask
+from .task_status import TaskStatus
 
 
 class SequentialTask(BaseTask):
@@ -12,5 +13,8 @@ class SequentialTask(BaseTask):
 
         for task in self.tasks:
             await task.run()
-
-        await super().complete()
+            if task.status != TaskStatus.COMPLETED:
+                await super().complete(TaskStatus.ERROR)
+                break
+        else:
+            await super().complete()

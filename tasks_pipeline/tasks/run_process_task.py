@@ -25,7 +25,7 @@ class RunProcessTask(BaseTask):
         stdout, stderr = await proc.communicate()
 
         if stderr:
-            self.message = stderr
+            self.message = stderr.decode().replace('\r', '').replace('\n', ' ')
             await super().complete(TaskStatus.ERROR)
             return
 

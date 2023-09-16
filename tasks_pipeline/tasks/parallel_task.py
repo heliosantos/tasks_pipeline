@@ -1,5 +1,6 @@
 import asyncio
 from .base_task import BaseTask
+from .task_status import TaskStatus
 
 
 class ParallelTask(BaseTask):
@@ -11,4 +12,8 @@ class ParallelTask(BaseTask):
     async def run(self):
         await super().run()
         await asyncio.gather(*[task.run() for task in self.tasks])
-        await super().complete()
+
+        if any((task for task in self.tasks if task.status != TaskStatus.COMPLETED)):
+            await super().complete(TaskStatus.ERROR)
+        else:
+            await super().complete()
