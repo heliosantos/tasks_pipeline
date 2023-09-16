@@ -1,0 +1,23 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+  type: ParallelTask
+  tasks:
+    - type: WaitForTask
+      name: Wait1
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait2
+      params:
+        waitFor: 10
+    - type: SequentialTask
+      tasks:
+        - type: WaitForTask
+          name: Wait1
+          params:
+            waitFor: 5
+        - type: WaitForTask
+          name: Wait2
+          params:
+            waitFor: 10

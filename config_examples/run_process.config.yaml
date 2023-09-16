@@ -1,0 +1,8 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+  type: RunProcessTask
+  name: echo
+  params:
+    cmd: echo ok
+    expectedOutput: ok
