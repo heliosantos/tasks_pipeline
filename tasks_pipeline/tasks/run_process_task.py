@@ -34,7 +34,7 @@ class RunProcessTask(BaseTask):
             await super().complete(TaskStatus.ERROR)
             return
 
-        if self.expectedOutput and not re.search(self.expectedOutput, stdout.decode()):
+        if self.expectedOutput and not re.search(self.expectedOutput, stdout.decode().strip()):
             self.message = 'unexpected output'
             await super().complete(TaskStatus.ERROR)
             return
