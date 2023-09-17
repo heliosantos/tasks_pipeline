@@ -1,0 +1,13 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+    type: RetryTask
+    params:
+      maxRetries: 10
+      delayBetweenRetries: 2
+    tasks:
+      - type: RunProcessTask
+        name: timeout
+        params:
+          cmd: echo %RANDOM%
+          expectedOutput: "[12]$"

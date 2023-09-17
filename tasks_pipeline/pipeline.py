@@ -200,6 +200,7 @@ async def main():
         defaultNames = {
             'SequentialTask': '⭣',
             'ParallelTask': '⮆',
+            'RetryTask': '↻',
         }
         if not task.get('name'):
             task['name'] = defaultNames.get(task['type'], task['type'])
