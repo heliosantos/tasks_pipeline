@@ -1,21 +1,8 @@
 import logging
 
 
-
-'''
-logging:
-  enabled: true
-  console: true
-  file: tasks_pipeline.log
-  loggers:
-    - tasks_pipeline:
-        level: DEBUG
-
-'''
-
-
 def setup_loggers(loggersConfig):
-    if not loggersConfig.get('enabled', True):
+    if not loggersConfig or not loggersConfig.get('enabled', True):
         return
 
     defaultUseConsole = loggersConfig.get('console', False)
