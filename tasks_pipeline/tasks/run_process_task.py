@@ -1,8 +1,12 @@
+import logging
 import asyncio
 import re
 
 from .base_task import BaseTask
 from .task_status import TaskStatus
+
+
+logger = logging.getLogger('tasks_pipeline')
 
 
 class RunProcessTask(BaseTask):
@@ -23,6 +27,12 @@ class RunProcessTask(BaseTask):
             stderr=asyncio.subprocess.PIPE)
 
         stdout, stderr = await proc.communicate()
+
+        if stdout:
+            logger.debug(stdout.decode())
+
+        if stderr:
+            logger.error(stderr.decode())
 
         if stderr:
             self.message = stderr.decode().replace('\r', '').replace('\n', ' ')

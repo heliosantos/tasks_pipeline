@@ -13,6 +13,7 @@ except ModuleNotFoundError:
     toastAvailable = False
 
 from .tasks import TaskStatus
+from .tasks_logger import setup_loggers
 
 
 def trim_text(text, maxLen):
@@ -192,6 +193,8 @@ async def main():
 
     with open(sys.argv[1], 'rb') as f:
         config = yaml.safe_load(f.read().decode('utf-8'))
+
+    setup_loggers(config.get('logging'))
 
     rootTask = config['rootTask']
     title = config.get('title', 'Tasks Pipeline')

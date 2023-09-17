@@ -1,0 +1,15 @@
+title: Example pipeline
+systemNotification: true
+logging:
+  enabled: true
+  console: true
+  file: tasks_pipeline.log
+  loggers:
+    tasks_pipeline:
+      level: DEBUG
+rootTask:
+  type: RunProcessTask
+  name: echo
+  params:
+    cmd: echo ok
+    expectedOutput: ok
