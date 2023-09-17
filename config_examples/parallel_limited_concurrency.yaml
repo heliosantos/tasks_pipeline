@@ -1,0 +1,23 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+  type: ParallelTask
+  params:
+    maxConcurrency: 2
+  tasks:
+    - type: RunProcessTask
+      name: timeout
+      params:
+        cmd: timeout 8
+    - type: RunProcessTask
+      name: timeout
+      params:
+        cmd: timeout 3
+    - type: RunProcessTask
+      name: timeout
+      params:
+        cmd: timeout 3
+    - type: RunProcessTask
+      name: timeout
+      params:
+        cmd: timeout 3
