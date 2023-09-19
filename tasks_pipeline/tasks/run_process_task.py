@@ -46,6 +46,7 @@ class RunProcessTask(BaseTask):
 
         if self.expectedOutput and not re.search(self.expectedOutput, stdout.decode().strip()):
             self.message = 'unexpected output'
+            logger.error(stdout.decode())
             await super().complete(TaskStatus.ERROR)
             return
 
