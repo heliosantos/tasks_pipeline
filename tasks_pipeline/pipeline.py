@@ -98,7 +98,7 @@ async def display(stdscr, rootTask, title):
                 (dp, c_gray),
                 (fn + ' ', taskColor),
                 (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
-                (trim_text(taskInstance.status.name + ' ', statusLen), c_orange),
+                (trim_text(taskInstance.status.name.replace('NOT_STARTED', '') + ' ', statusLen), c_orange),
                 (trim_text(taskInstance.message + ' ', msgLen), c_lightgray)
             ):
                 task['win'].addstr(t, c)
