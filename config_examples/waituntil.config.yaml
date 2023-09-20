@@ -1,0 +1,20 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+  type: ParallelTask
+  tasks:
+    - type: WaitUntilTask
+      name: Wait until hour
+      params:
+        waitUntil: '00:00'
+        
+    - type: WaitUntilTask
+      name: Wait until half past
+      params:
+        waitUntil: '30:00'
+        
+    - type: WaitUntilTask
+      name: Wait until 13:40:30
+      params:
+        waitUntil: '13:40:30'
+        
