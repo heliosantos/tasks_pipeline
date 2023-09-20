@@ -59,7 +59,7 @@ async def display(stdscr, rootTask, title):
     # c_light = get_color(240, 240, 240)
 
     stdscr.addstr(1, 3, title, c_gray)
-    stdscr.addstr(4 + len(tasks) + 1, 3, '[S] Start, [N] Next Task, [C] Cancel all Tasks, [X] exit', c_gray)
+    stdscr.addstr(4 + len(tasks) + 1, 3, '[S] Start, [C] Cancel all Tasks, [X] exit', c_gray)
 
     for i, task in enumerate(tasks):
         task['win'] = curses.newwin(1, width - 1 - 3, i + 4, 3)
@@ -108,15 +108,13 @@ async def display(stdscr, rootTask, title):
         await asyncio.sleep(0.1)
 
 
-async def process_input(stdscr, cancel_task, cancel_all_tasks, start_tasks):
+async def process_input(stdscr, cancel_all_tasks, start_tasks):
     stdscr.nodelay(True)
     while True:
         with suppress(curses.error):
             k = stdscr.getkey()
             if k.lower() == 'c':
                 await cancel_all_tasks()
-            if k.lower() == 'n':
-                await cancel_task()
             if k.lower() == 's':
                 asyncio.create_task(start_tasks())
             if k.lower() == 'x':
@@ -226,7 +224,7 @@ async def main():
             instance = task['instance']
             if instance.status == TaskStatus.RUNNING:
                 futures.append(instance.cancel())
-
+ 
         tasks_apply(rootTask, cancel)
         await asyncio.gather(*futures)
 
@@ -239,7 +237,7 @@ async def main():
             )
 
     asyncio.create_task(display(stdscr, rootTask, title))
-    await process_input(stdscr, cancel_task, cancel_all_tasks, start_tasks)
+    await process_input(stdscr, cancel_all_tasks, start_tasks)
 
     curses.nocbreak()
     stdscr.keypad(False)
