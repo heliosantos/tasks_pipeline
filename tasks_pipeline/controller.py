@@ -1,25 +1,26 @@
 
-from .util import InputMode
 from contextlib import suppress
 import curses
 import asyncio
 
+from .task_model import TaskModel, InputMode
 
-async def process_input(stdscr, control, cancel_all_tasks, start_tasks):
+
+async def process_input(stdscr, model: TaskModel, cancel_all_tasks, start_tasks):
     stdscr.nodelay(True)
 
-    control['mode'] = InputMode.NONE
-    control['selectedTask'] = ''
-    control['command'] = ''
+    model.inputMode = InputMode.NONE
+    model.selectedTask = ''
+    model.command = ''
 
     while True:
         with suppress(curses.error):
             k = stdscr.getkey()
-            match control['mode']:
+            match model.inputMode:
                 case InputMode.NONE:
                     if k == ':':
-                        control['mode'] = InputMode.GET_TASK
-                        control['selectedTask'] = ''
+                        model.inputMode = InputMode.GET_TASK
+                        model.selectedTask = ''
                     if k.lower() == 'c':
                         await cancel_all_tasks()
                     if k.lower() == 's':
@@ -29,14 +30,14 @@ async def process_input(stdscr, control, cancel_all_tasks, start_tasks):
 
                 case InputMode.GET_TASK:
                     if k == '\n':
-                        control['mode'] = InputMode.GET_COMMAND
+                        model.inputMode = InputMode.GET_COMMAND
                     else:
-                        control['selectedTask'] += k
+                        model.selectedTask += k
 
                 case InputMode.GET_COMMAND:
                     if k == '\n':
-                        control['mode'] = InputMode.NONE
+                        model.inputMode = InputMode.NONE
                     else:
-                        control['command'] += k
-            control['hasUpdates'] = True
+                        model.command += k
+            model.hasUpdates = True
         await asyncio.sleep(0.1)

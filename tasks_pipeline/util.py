@@ -1,11 +1,3 @@
-from enum import Enum, auto
-
-
-class InputMode(Enum):
-    NONE = auto()
-    GET_TASK = auto()
-    GET_COMMAND = auto()
-
 
 def flatten_tasks(task):
     tasks = []
