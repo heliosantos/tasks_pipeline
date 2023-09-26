@@ -5,7 +5,7 @@ import asyncio
 import logging
 
 from .tasks import TaskStatus
-from .task_model import TaskModel, InputMode
+from .tasks_model import TasksModel, InputMode
 
 
 logger = logging.getLogger('tasks_pipeline.run_process_task')
@@ -29,7 +29,7 @@ async def execute_command(model):
             await enable_task(model.selectedTask)
 
 
-async def process_input(stdscr, model: TaskModel, cancel_all_tasks, start_tasks):
+async def process_input(stdscr, model: TasksModel, cancel_all_tasks, start_tasks):
     stdscr.nodelay(True)
 
     model.inputMode = InputMode.NONE

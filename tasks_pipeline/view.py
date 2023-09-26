@@ -2,7 +2,7 @@ import asyncio
 import curses
 import datetime
 from .tasks import TaskStatus
-from .task_model import InputMode, TaskModel
+from .tasks_model import InputMode, TasksModel
 
 
 def add_display_info(node, level=0, parentPrefix='', lastChild=True):
@@ -54,7 +54,7 @@ def get_color(r, g, b):
     return curses.color_pair(colorCounter)
 
 
-async def input_update(stdscr, model: TaskModel):
+async def input_update(stdscr, model: TasksModel):
     width = curses.COLS
     win = curses.newwin(1, width - 1 - 3, 4 + len(model.tasks) + 1, 3)
 
@@ -77,7 +77,7 @@ async def input_update(stdscr, model: TaskModel):
         model.hasUpdates = False
 
 
-async def display(stdscr, model: TaskModel, title):
+async def display(stdscr, model: TasksModel, title):
     add_display_info(model.rootTask)
 
     numLinesWidth = len(str(model.tasks[-1]['index'])) + 1

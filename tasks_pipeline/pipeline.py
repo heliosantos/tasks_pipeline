@@ -15,7 +15,7 @@ from .tasks_logger import setup_loggers
 from .util import tasks_apply
 from .view import display
 from .controller import process_input
-from .task_model import TaskModel
+from .tasks_model import TasksModel
 
 
 def instanciate_tasks(task):
@@ -92,7 +92,7 @@ async def main(stdscr):
                 'All tasks completed',
             )
 
-    model = TaskModel(rootTask)
+    model = TasksModel(rootTask)
 
     asyncio.create_task(display(stdscr, model, title))
     await process_input(stdscr, model, cancel_all_tasks, start_tasks)
