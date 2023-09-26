@@ -1,6 +1,6 @@
 import asyncio
 
-from .pipeline import main
+from .pipeline import run
 
 
-asyncio.run(main())
+run()

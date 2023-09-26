@@ -36,15 +36,10 @@ def instanciate_tasks(task):
         task['instance'].tasks = [t['instance'] for t in task.get('tasks', [])]
 
 
-async def main():
+async def main(stdscr):
     if len(sys.argv) < 2:
         print('usage: tasks_pipeline configFile')
         return
-
-    stdscr = curses.initscr()
-    curses.noecho()
-    curses.cbreak()
-    stdscr.keypad(True)
 
     curses.start_color()
     curses.use_default_colors()
@@ -108,5 +103,13 @@ async def main():
     curses.endwin()
 
 
+def main_curses_wrapper(stdscr):
+    asyncio.run(main(stdscr))
+
+
+def run():
+    curses.wrapper(main_curses_wrapper)
+
+
 if __name__ == '__main__':
-    asyncio.run(main())
+    run()
