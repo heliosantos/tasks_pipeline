@@ -16,11 +16,14 @@ class RetryTask(BaseTask):
         await super().run()
 
         task = self.tasks[0]
+        if task.status == TaskStatus.DISABLED:
+            await super().complete()
+            return
 
         for i in range(self.maxRetries):
             self.message = f'attempt {i + 1} out of {self.maxRetries}'
             await task.run()
-            if task.status == TaskStatus.COMPLETED:
+            if task.status in (TaskStatus.COMPLETED, TaskStatus.DISABLED):
                 await super().complete()
                 return
             await asyncio.sleep(int(self.delayBetweenRetries))

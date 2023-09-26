@@ -23,9 +23,9 @@ class ParallelTask(BaseTask):
             async def f(coro):
                 return await coro
 
-        await asyncio.gather(*[f(task.run()) for task in self.tasks])
+        await asyncio.gather(*[f(task.run()) for task in self.tasks if task.status != TaskStatus.DISABLED])
 
-        if any((task for task in self.tasks if task.status != TaskStatus.COMPLETED)):
+        if any((task for task in self.tasks if task.status not in (TaskStatus.COMPLETED, TaskStatus.DISABLED))):
             await super().complete(TaskStatus.ERROR)
         else:
             await super().complete()

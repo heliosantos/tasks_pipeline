@@ -7,3 +7,4 @@ class TaskStatus(Enum):
     COMPLETED = auto()
     CANCELLED = auto()
     ERROR = auto()
+    DISABLED = auto()

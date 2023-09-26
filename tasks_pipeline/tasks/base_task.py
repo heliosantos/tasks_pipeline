@@ -10,12 +10,15 @@ class BaseTask(object):
         self.message = ''
         self.startTime = None
         self.stopTime = None
+        self.tasks = []
 
     async def run(self):
         self.status = TaskStatus.RUNNING
         self.startTime = datetime.datetime.now()
 
     async def cancel(self):
+        for task in self.tasks:
+            task.cancel()
         self.status = TaskStatus.CANCELLED
         self.stopTime = datetime.datetime.now()
 

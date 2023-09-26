@@ -2,7 +2,6 @@ import asyncio
 import curses
 import datetime
 from .tasks import TaskStatus
-from .util import flatten_tasks
 from .task_model import InputMode, TaskModel
 
 
@@ -66,11 +65,13 @@ async def input_update(stdscr, model: TaskModel):
         win.clear()
         match model.inputMode:
             case InputMode.NONE:
-                win.addstr('[S] Start, [C] Cancel all Tasks, [X] exit')
+                win.addstr('[S] Start, [X] exit')
             case InputMode.GET_TASK:
-                win.addstr(model.selectedTask)
+                win.addstr(f'enter task index: {model.selectedTaskText}')
             case InputMode.GET_COMMAND:
-                win.addstr(model.command)
+                text = f'task index: {model.selectedTask["index"]}   '
+                text = '[D] Disable' if model.selectedTask['instance'].status != TaskStatus.DISABLED else '[E] enable'
+                win.addstr(text)
 
         win.refresh()
         model.hasUpdates = False
@@ -83,10 +84,11 @@ async def display(stdscr, model: TaskModel, title):
 
     width = curses.COLS
 
+    c_lightgray = get_color(240, 240, 240)
     c_gray = get_color(192, 192, 192)
+    c_darkgray = get_color(32, 32, 32)
     c_green = get_color(0, 255, 0)
     c_red = get_color(255, 0, 0)
-    c_lightgray = get_color(240, 240, 240)
     c_orange = get_color(255, 165, 0)
     # c_light = get_color(240, 240, 240)
 
@@ -118,6 +120,7 @@ async def display(stdscr, model: TaskModel, title):
             elapsed = (taskInstance.stopTime or now) - (taskInstance.startTime or now)
 
             taskColor = (c_gray if taskInstance.status == TaskStatus.NOT_STARTED else
+                         c_darkgray if taskInstance.status == TaskStatus.DISABLED else
                          c_lightgray if taskInstance.status == TaskStatus.RUNNING else
                          c_green if taskInstance.status == TaskStatus.COMPLETED else
                          c_red)
@@ -130,7 +133,7 @@ async def display(stdscr, model: TaskModel, title):
             columns = []
 
             if showNumbers:
-                lineNumberColor = c_orange if task['index'] == int(model.selectedTask or 0) else c_lightgray
+                lineNumberColor = c_orange if (model.selectedTask and task['index'] == model.selectedTask['index']) else c_lightgray
                 columns.append((str(task['index']).rjust(numLinesWidth - 1) + ' ', lineNumberColor))
             columns.extend([
                 (dp, c_gray),

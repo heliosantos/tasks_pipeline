@@ -12,8 +12,10 @@ class SequentialTask(BaseTask):
         await super().run()
 
         for task in self.tasks:
+            if task.status == TaskStatus.DISABLED:
+                continue
             await task.run()
-            if task.status != TaskStatus.COMPLETED:
+            if task.status not in (TaskStatus.COMPLETED, TaskStatus.DISABLED):
                 await super().complete(TaskStatus.ERROR)
                 break
         else:

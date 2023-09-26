@@ -15,9 +15,14 @@ class TaskModel:
         self.tasks = flatten_tasks(rootTask)
         self.inputMode: InputMode = InputMode.NONE
         self.hasUpdates: bool = True
-        self.selectedTask: int = 0
-        self.command: str = ''
+        self.selectedTask = None
+        self.selectedTaskText = ''
+        self.commandText: str = ''
         add_task_index(self.tasks)
+
+    def selectTask(self, key):
+        matching = list(filter(lambda t: t['index'] == int(key), self.tasks))
+        self.selectedTask = matching[0] if matching else None
 
 
 def add_task_index(tasks):
