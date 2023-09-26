@@ -6,7 +6,7 @@ from .base_task import BaseTask
 from .task_status import TaskStatus
 
 
-logger = logging.getLogger('tasks_pipeline')
+logger = logging.getLogger('tasks_pipeline.run_process_task')
 
 
 class RunProcessTask(BaseTask):
@@ -17,6 +17,7 @@ class RunProcessTask(BaseTask):
             raise TypeError('cmd expected 1 argument, got 0')
         self.cmd = cmd
         self.expectedOutput = expectedOutput
+        logger.debug(self.expectedOutput)
 
     async def run(self):
         await super().run()
