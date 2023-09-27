@@ -139,7 +139,7 @@ async def display(stdscr, model: TasksModel, title):
                 (dp, c_gray),
                 (fn + ' ', taskColor),
                 (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
-                (trim_text(taskInstance.status.name.replace('NOT_STARTED', '') + ' ', statusLen), c_orange),
+                (trim_text(taskInstance.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen), c_orange),
                 (trim_text(taskInstance.message + ' ', (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray)
             ])
  

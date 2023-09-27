@@ -6,17 +6,22 @@ import logging
 
 from .tasks import TaskStatus
 from .tasks_model import TasksModel, InputMode
+from .util import tasks_apply
 
 
 logger = logging.getLogger('tasks_pipeline.run_process_task')
 
 
 async def disable_task(task):
-    task['instance'].status = TaskStatus.DISABLED
+    def f(task):
+        task['instance'].status = TaskStatus.DISABLED
+    tasks_apply(task, f)
 
 
 async def enable_task(task):
-    task['instance'].status = TaskStatus.NOT_STARTED
+    def f(task):
+        task['instance'].status = TaskStatus.NOT_STARTED
+    tasks_apply(task, f)
 
 
 async def execute_command(model):
