@@ -12,20 +12,20 @@ from .util import tasks_apply
 logger = logging.getLogger('tasks_pipeline.run_process_task')
 
 
-async def disable_task(task):
+async def disable_task(taskModel):
     def f(task):
-        task['instance'].status = TaskStatus.DISABLED
-    tasks_apply(task, f)
+        task.task.status = TaskStatus.DISABLED
+    tasks_apply(taskModel, f)
 
 
-async def enable_task(task):
-    def f(task):
-        task['instance'].status = TaskStatus.NOT_STARTED
-    tasks_apply(task, f)
+async def enable_task(taskModel):
+    def f(taskModel):
+        taskModel.task.status = TaskStatus.NOT_STARTED
+    tasks_apply(taskModel, f)
 
 
 async def execute_command(model):
-    logger.info(f'run command: {model.selectedTask["index"]=}, {model.commandText=}')
+    logger.info(f'run command: {model.selectedTask.taskIndex=}, {model.commandText=}')
     match model.commandText.lower():
         case 'disable':
             await disable_task(model.selectedTask)

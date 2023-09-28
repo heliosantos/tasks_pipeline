@@ -18,14 +18,7 @@ class TasksModel:
         self.selectedTask = None
         self.selectedTaskText = ''
         self.commandText: str = ''
-        add_task_index(self.tasks)
 
     def selectTask(self, key):
-        matching = list(filter(lambda t: t['index'] == int(key), self.tasks))
+        matching = list(filter(lambda t: t.taskIndex == int(key), self.tasks))
         self.selectedTask = matching[0] if matching else None
-
-
-def add_task_index(tasks):
-    for i, task in enumerate(tasks):
-        task['index'] = i + 1
-        # node['prettyLineNumber'] = str(node['lineNumber']).rjust(len(str(len(tasks))))

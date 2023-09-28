@@ -16,9 +16,21 @@ from .util import tasks_apply
 from .view import display
 from .controller import process_input
 from .tasks_model import TasksModel
+from .task_model import TaskModel
 
 
-def instanciate_tasks(task):
+taskIndex = 0
+
+defaultNames = {
+    'SequentialTask': '⭣',
+    'ParallelTask': '⮆',
+    'RetryTask': '↻',
+}
+
+
+def create_task_model(task, parentTaskModel=None):
+    global taskIndex
+    taskIndex += 1
     t = task['type']
     t = t.split('.')
     if len(t) == 1:
@@ -27,13 +39,22 @@ def instanciate_tasks(task):
     mod = importlib.import_module(mod)
     cls = getattr(mod, cls)
 
-    task['instance'] = cls(task['name'], **task.get('params', {}))
+    taskName = task.get('name', '')
+    if defaultName := defaultNames.get(task['type'], ''):
+        taskName = f'{defaultName} {taskName}'
+
+    taskModel = TaskModel(taskName, cls(taskName, **task.get('params', {})), taskIndex=taskIndex)
+
+    if parentTaskModel:
+        parentTaskModel.subtasks.append(taskModel)
+        parentTaskModel.task.tasks.append(taskModel.task)
 
     for child in task.get('tasks', []):
-        instanciate_tasks(child)
+        create_task_model(child, taskModel)
 
-    if 'tasks' in task['instance'].__dict__:
-        task['instance'].tasks = [t['instance'] for t in task.get('tasks', [])]
+    return taskModel
+
+
 
 
 async def main(stdscr):
@@ -53,18 +74,7 @@ async def main(stdscr):
     rootTask = config['rootTask']
     title = config.get('title', 'Tasks Pipeline')
 
-    def add_default_name(task):
-        defaultNames = {
-            'SequentialTask': '⭣',
-            'ParallelTask': '⮆',
-            'RetryTask': '↻',
-        }
-        if not task.get('name'):
-            task['name'] = defaultNames.get(task['type'], task['type'])
-
-    tasks_apply(rootTask, add_default_name)
-
-    instanciate_tasks(rootTask)
+    rootTaskModel = create_task_model(rootTask)
 
     cancelAllTasks = False
 
@@ -76,23 +86,22 @@ async def main(stdscr):
     async def cancel_task():
         futures = []
 
-        def cancel(task):
-            instance = task['instance']
-            if instance.status == TaskStatus.RUNNING:
-                futures.append(instance.cancel())
+        def cancel(taskModel):
+            if taskModel.task.status == TaskStatus.RUNNING:
+                futures.append(taskModel.task.cancel())
 
         tasks_apply(rootTask, cancel)
         await asyncio.gather(*futures)
 
     async def start_tasks():
-        await rootTask['instance'].run()
+        await rootTaskModel.task.run()
         if toastAvailable and config.get('systemNotification', True):
             win11toast.notify(
                 title,
                 'All tasks completed',
             )
 
-    model = TasksModel(rootTask)
+    model = TasksModel(rootTaskModel)
 
     asyncio.create_task(display(stdscr, model, title))
     await process_input(stdscr, model, cancel_all_tasks, start_tasks)

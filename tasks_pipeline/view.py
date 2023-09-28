@@ -5,7 +5,7 @@ from .tasks import TaskStatus
 from .tasks_model import InputMode, TasksModel
 
 
-def add_display_info(node, level=0, parentPrefix='', lastChild=True):
+def add_display_info(taskModel, level=0, parentPrefix='', lastChild=True):
     prefix = ''
     childrenPrefix = ''
     if level == 0:
@@ -15,13 +15,11 @@ def add_display_info(node, level=0, parentPrefix='', lastChild=True):
         prefix = parentPrefix + ('└' if lastChild else '├')
         childrenPrefix = parentPrefix + (' ' if lastChild else '│')
 
-    node['displayPrefix'] = prefix
+    taskModel.displayPrefix = prefix
 
-    children = node.get('tasks', [])
-
-    if children:
-        lastChildIdx = len(children) - 1
-        for e, child in enumerate(children):
+    if taskModel.subtasks:
+        lastChildIdx = len(taskModel.subtasks) - 1
+        for e, child in enumerate(taskModel.subtasks):
             add_display_info(child, level + 1, childrenPrefix, e == lastChildIdx)
 
 
@@ -69,8 +67,8 @@ async def input_update(stdscr, model: TasksModel):
             case InputMode.GET_TASK:
                 win.addstr(f'enter task index: {model.selectedTaskText}')
             case InputMode.GET_COMMAND:
-                text = f'task index: {model.selectedTask["index"]}   '
-                text = '[D] Disable' if model.selectedTask['instance'].status != TaskStatus.DISABLED else '[E] enable'
+                text = f'task index: {model.selectedTask.taskIndex}   '
+                text = '[D] Disable' if model.selectedTask.task.status != TaskStatus.DISABLED else '[E] enable'
                 win.addstr(text)
 
         win.refresh()
@@ -80,7 +78,7 @@ async def input_update(stdscr, model: TasksModel):
 async def display(stdscr, model: TasksModel, title):
     add_display_info(model.rootTask)
 
-    numLinesWidth = len(str(model.tasks[-1]['index'])) + 1
+    numLinesWidth = len(str(model.tasks[-1].taskIndex)) + 1
 
     width = curses.COLS
 
@@ -95,10 +93,10 @@ async def display(stdscr, model: TasksModel, title):
     stdscr.addstr(1, 3, title, c_gray)
     asyncio.create_task(input_update(stdscr, model))
 
-    for i, task in enumerate(model.tasks):
-        task['win'] = curses.newwin(1, width - 1 - 3, i + 4, 3)
+    for i, taskModel in enumerate(model.tasks):
+        taskModel.win = curses.newwin(1, width - 1 - 3, i + 4, 3)
 
-    nameLen = min(max(len(t['displayPrefix'] + t['name']) for t in model.tasks), 20)
+    nameLen = min(max(len(t.displayPrefix + t.name) for t in model.tasks), 20)
     elapsedLen = 8
     statusLen = 12
     msgLen = width - nameLen - elapsedLen - statusLen - 9
@@ -114,38 +112,38 @@ async def display(stdscr, model: TasksModel, title):
     while True:
 
         showNumbers = model.inputMode in (InputMode.GET_TASK, InputMode.GET_COMMAND)
-        for task in model.tasks:
-            taskInstance = task['instance']
+        for taskModel in model.tasks:
+            task = taskModel.task
             now = datetime.datetime.now()
-            elapsed = (taskInstance.stopTime or now) - (taskInstance.startTime or now)
+            elapsed = (task.stopTime or now) - (task.startTime or now)
 
-            taskColor = (c_gray if taskInstance.status == TaskStatus.NOT_STARTED else
-                         c_darkgray if taskInstance.status == TaskStatus.DISABLED else
-                         c_lightgray if taskInstance.status == TaskStatus.RUNNING else
-                         c_green if taskInstance.status == TaskStatus.COMPLETED else
+            taskColor = (c_gray if task.status == TaskStatus.NOT_STARTED else
+                         c_darkgray if task.status == TaskStatus.DISABLED else
+                         c_lightgray if task.status == TaskStatus.RUNNING else
+                         c_green if task.status == TaskStatus.COMPLETED else
                          c_red)
 
-            task['win'].clear()
+            taskModel.win.clear()
 
-            dp = task['displayPrefix']
-            fn = trim_text(dp + task['name'], nameLen).removeprefix(dp)
+            dp = taskModel.displayPrefix
+            fn = trim_text(dp + taskModel.name, nameLen).removeprefix(dp)
 
             columns = []
 
             if showNumbers:
-                lineNumberColor = c_orange if (model.selectedTask and task['index'] == model.selectedTask['index']) else c_lightgray
-                columns.append((str(task['index']).rjust(numLinesWidth - 1) + ' ', lineNumberColor))
+                lineNumberColor = c_orange if (model.selectedTask and taskModel.taskIndex == model.selectedTask.taskIndex) else c_lightgray
+                columns.append((str(taskModel.taskIndex).rjust(numLinesWidth - 1) + ' ', lineNumberColor))
             columns.extend([
                 (dp, c_gray),
                 (fn + ' ', taskColor),
                 (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
-                (trim_text(taskInstance.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen), c_orange),
-                (trim_text(taskInstance.message + ' ', (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray)
+                (trim_text(task.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen), c_orange),
+                (trim_text(task.message + ' ', (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray)
             ])
  
             for t, c in columns:
-                task['win'].addstr(t, c)
+                taskModel.win.addstr(t, c)
 
-            task['win'].refresh()
+            taskModel.win.refresh()
 
         await asyncio.sleep(0.1)
