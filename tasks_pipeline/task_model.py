@@ -3,6 +3,6 @@ class TaskModel:
         self.task = task
         self.subtasks = []
         self.taskIndex = taskIndex
-        self.displayPrefix = ''
+        self.displayPrefix = ""
         self.win = None
         self.name = name

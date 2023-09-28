@@ -5,15 +5,15 @@ from .tasks import TaskStatus
 from .tasks_model import InputMode, TasksModel
 
 
-def add_display_info(taskModel, level=0, parentPrefix='', lastChild=True):
-    prefix = ''
-    childrenPrefix = ''
+def add_display_info(taskModel, level=0, parentPrefix="", lastChild=True):
+    prefix = ""
+    childrenPrefix = ""
     if level == 0:
-        prefix = ''
-        childrenPrefix = ''
+        prefix = ""
+        childrenPrefix = ""
     else:
-        prefix = parentPrefix + ('└' if lastChild else '├')
-        childrenPrefix = parentPrefix + (' ' if lastChild else '│')
+        prefix = parentPrefix + ("└" if lastChild else "├")
+        childrenPrefix = parentPrefix + (" " if lastChild else "│")
 
     taskModel.displayPrefix = prefix
 
@@ -27,7 +27,7 @@ def trim_text(text, maxLen):
     text = text.ljust(maxLen)
     if len(text) <= maxLen:
         return text
-    return text[: maxLen - 3] + '...'
+    return text[: maxLen - 3] + "..."
 
 
 def scale_color(r, g, b):
@@ -63,12 +63,12 @@ async def input_update(stdscr, model: TasksModel):
         win.clear()
         match model.inputMode:
             case InputMode.NONE:
-                win.addstr('[S] Start, [X] exit')
+                win.addstr("[S] Start, [X] exit")
             case InputMode.GET_TASK:
-                win.addstr(f'enter task index: {model.selectedTaskText}')
+                win.addstr(f"enter task index: {model.selectedTaskText}")
             case InputMode.GET_COMMAND:
-                text = f'task index: {model.selectedTask.taskIndex}   '
-                text = '[D] Disable' if model.selectedTask.task.status != TaskStatus.DISABLED else '[E] enable'
+                text = f"task index: {model.selectedTask.taskIndex}   "
+                text = "[D] Disable" if model.selectedTask.task.status != TaskStatus.DISABLED else "[E] enable"
                 win.addstr(text)
 
         win.refresh()
@@ -104,13 +104,13 @@ async def display(stdscr, model: TasksModel, title):
     stdscr.addstr(
         3,
         3,
-        trim_text('Task', nameLen)
-        + ' '
-        + trim_text('Elapsed', elapsedLen)
-        + ' '
-        + trim_text('Status', statusLen)
-        + ' '
-        + trim_text('Message', msgLen),
+        trim_text("Task", nameLen)
+        + " "
+        + trim_text("Elapsed", elapsedLen)
+        + " "
+        + trim_text("Status", statusLen)
+        + " "
+        + trim_text("Message", msgLen),
         c_gray,
     )
 
@@ -148,17 +148,17 @@ async def display(stdscr, model: TasksModel, title):
                     if (model.selectedTask and taskModel.taskIndex == model.selectedTask.taskIndex)
                     else c_lightgray
                 )
-                columns.append((str(taskModel.taskIndex).rjust(numLinesWidth - 1) + ' ', lineNumberColor))
+                columns.append((str(taskModel.taskIndex).rjust(numLinesWidth - 1) + " ", lineNumberColor))
             columns.extend(
                 [
                     (dp, c_gray),
-                    (fn + ' ', taskColor),
-                    (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
+                    (fn + " ", taskColor),
+                    (trim_text(str(elapsed).split(".")[0] + " ", elapsedLen), c_lightgray),
                     (
-                        trim_text(task.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen),
+                        trim_text(task.status.name.replace("NOT_STARTED", "").replace("DISABLED", "") + " ", statusLen),
                         c_orange,
                     ),
-                    (trim_text(task.message + ' ', (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray),
+                    (trim_text(task.message + " ", (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray),
                 ]
             )
 

@@ -2,21 +2,21 @@ import logging
 
 
 def setup_loggers(loggersConfig):
-    if not loggersConfig or not loggersConfig.get('enabled', True):
+    if not loggersConfig or not loggersConfig.get("enabled", True):
         return
 
-    defaultUseConsole = loggersConfig.get('console', False)
-    defaultFile = loggersConfig.get('file')
+    defaultUseConsole = loggersConfig.get("console", False)
+    defaultFile = loggersConfig.get("file")
 
-    for loggerName, loggerConfig in loggersConfig.get('loggers', {}).items():
-        level = loggerConfig.get('level', 'INFO')
+    for loggerName, loggerConfig in loggersConfig.get("loggers", {}).items():
+        level = loggerConfig.get("level", "INFO")
         level = logging.getLevelName(level)
-        useConsole = loggerConfig.get('console', defaultUseConsole)
-        file = loggerConfig.get('file', defaultFile)
+        useConsole = loggerConfig.get("console", defaultUseConsole)
+        file = loggerConfig.get("file", defaultFile)
 
         logger = logging.getLogger(loggerName)
         logger.setLevel(level)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
         if file:
             fh = logging.FileHandler(file)
