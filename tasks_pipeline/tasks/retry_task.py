@@ -5,7 +5,6 @@ from .task_status import TaskStatus
 
 
 class RetryTask(BaseTask):
-
     def __init__(self, name, maxRetries=1, delayBetweenRetries=0):
         super().__init__(name)
         self.maxRetries = maxRetries

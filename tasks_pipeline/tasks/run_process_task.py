@@ -10,7 +10,6 @@ logger = logging.getLogger('tasks_pipeline.run_process_task')
 
 
 class RunProcessTask(BaseTask):
-
     def __init__(self, name, cmd=None, expectedOutput=None):
         super().__init__(name)
         if not cmd:
@@ -23,9 +22,8 @@ class RunProcessTask(BaseTask):
         await super().run()
 
         proc = await asyncio.create_subprocess_shell(
-            self.cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE)
+            self.cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
 
         stdout, stderr = await proc.communicate()
 

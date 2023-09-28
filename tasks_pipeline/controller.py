@@ -1,4 +1,3 @@
-
 from contextlib import suppress
 import curses
 import asyncio
@@ -15,12 +14,14 @@ logger = logging.getLogger('tasks_pipeline.run_process_task')
 async def disable_task(taskModel):
     def f(task):
         task.task.status = TaskStatus.DISABLED
+
     tasks_apply(taskModel, f)
 
 
 async def enable_task(taskModel):
     def f(taskModel):
         taskModel.task.status = TaskStatus.NOT_STARTED
+
     tasks_apply(taskModel, f)
 
 

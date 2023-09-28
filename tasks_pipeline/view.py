@@ -27,7 +27,7 @@ def trim_text(text, maxLen):
     text = text.ljust(maxLen)
     if len(text) <= maxLen:
         return text
-    return text[:maxLen - 3] + '...'
+    return text[: maxLen - 3] + '...'
 
 
 def scale_color(r, g, b):
@@ -35,8 +35,8 @@ def scale_color(r, g, b):
     rgb = (
         min(round(r * f), curses.COLORS - 1),
         min(round(g * f), curses.COLORS - 1),
-        min(round(b * f),  curses.COLORS - 1),
-        )
+        min(round(b * f), curses.COLORS - 1),
+    )
     return rgb
 
 
@@ -101,27 +101,39 @@ async def display(stdscr, model: TasksModel, title):
     statusLen = 12
     msgLen = width - nameLen - elapsedLen - statusLen - 9
 
-    stdscr.addstr(3, 3,
-                  trim_text('Task', nameLen) + ' ' +
-                  trim_text('Elapsed', elapsedLen) + ' ' +
-                  trim_text('Status', statusLen) + ' ' +
-                  trim_text('Message', msgLen), c_gray)
+    stdscr.addstr(
+        3,
+        3,
+        trim_text('Task', nameLen)
+        + ' '
+        + trim_text('Elapsed', elapsedLen)
+        + ' '
+        + trim_text('Status', statusLen)
+        + ' '
+        + trim_text('Message', msgLen),
+        c_gray,
+    )
 
     stdscr.refresh()
 
     while True:
-
         showNumbers = model.inputMode in (InputMode.GET_TASK, InputMode.GET_COMMAND)
         for taskModel in model.tasks:
             task = taskModel.task
             now = datetime.datetime.now()
             elapsed = (task.stopTime or now) - (task.startTime or now)
 
-            taskColor = (c_gray if task.status == TaskStatus.NOT_STARTED else
-                         c_darkgray if task.status == TaskStatus.DISABLED else
-                         c_lightgray if task.status == TaskStatus.RUNNING else
-                         c_green if task.status == TaskStatus.COMPLETED else
-                         c_red)
+            taskColor = (
+                c_gray
+                if task.status == TaskStatus.NOT_STARTED
+                else c_darkgray
+                if task.status == TaskStatus.DISABLED
+                else c_lightgray
+                if task.status == TaskStatus.RUNNING
+                else c_green
+                if task.status == TaskStatus.COMPLETED
+                else c_red
+            )
 
             taskModel.win.clear()
 
@@ -131,16 +143,25 @@ async def display(stdscr, model: TasksModel, title):
             columns = []
 
             if showNumbers:
-                lineNumberColor = c_orange if (model.selectedTask and taskModel.taskIndex == model.selectedTask.taskIndex) else c_lightgray
+                lineNumberColor = (
+                    c_orange
+                    if (model.selectedTask and taskModel.taskIndex == model.selectedTask.taskIndex)
+                    else c_lightgray
+                )
                 columns.append((str(taskModel.taskIndex).rjust(numLinesWidth - 1) + ' ', lineNumberColor))
-            columns.extend([
-                (dp, c_gray),
-                (fn + ' ', taskColor),
-                (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
-                (trim_text(task.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen), c_orange),
-                (trim_text(task.message + ' ', (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray)
-            ])
- 
+            columns.extend(
+                [
+                    (dp, c_gray),
+                    (fn + ' ', taskColor),
+                    (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), c_lightgray),
+                    (
+                        trim_text(task.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen),
+                        c_orange,
+                    ),
+                    (trim_text(task.message + ' ', (msgLen - numLinesWidth) if showNumbers else msgLen), c_lightgray),
+                ]
+            )
+
             for t, c in columns:
                 taskModel.win.addstr(t, c)
 

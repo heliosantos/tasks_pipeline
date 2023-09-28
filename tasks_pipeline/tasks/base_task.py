@@ -3,7 +3,6 @@ import datetime
 
 
 class BaseTask(object):
-
     def __init__(self, name):
         self.name = name
         self.status = TaskStatus.NOT_STARTED

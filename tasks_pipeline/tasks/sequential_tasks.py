@@ -3,7 +3,6 @@ from .task_status import TaskStatus
 
 
 class SequentialTask(BaseTask):
-
     def __init__(self, name, tasks=[]):
         super().__init__(name)
         self.tasks = tasks

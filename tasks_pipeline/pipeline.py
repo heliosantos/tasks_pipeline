@@ -6,6 +6,7 @@ import sys
 
 try:
     import win11toast
+
     toastAvailable = True
 except ModuleNotFoundError:
     toastAvailable = False
@@ -53,8 +54,6 @@ def create_task_model(task, parentTaskModel=None):
         create_task_model(child, taskModel)
 
     return taskModel
-
-
 
 
 async def main(stdscr):

@@ -1,4 +1,3 @@
-
 def flatten_tasks(task):
     tasks = []
     tasks.append(task)

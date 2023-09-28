@@ -7,7 +7,6 @@ from .task_status import TaskStatus
 
 
 class WaitForTask(BaseTask):
-
     def __init__(self, name, waitFor: datetime.timedelta | str | int):
         super().__init__(name)
         self.waitFor = waitFor
@@ -33,7 +32,6 @@ class WaitForTask(BaseTask):
 
 
 class WaitUntilTask(BaseTask):
-
     def __init__(self, name, waitUntil: datetime.datetime | str = None):
         super().__init__(name)
         self.waitUntil = waitUntil
@@ -43,8 +41,20 @@ class WaitUntilTask(BaseTask):
 
         if isinstance(self.waitUntil, str):
             d = datetime.datetime.now()
-            h, m, s = list(reversed([int(x) if x is not None else None for _, x in zip_longest(range(3), reversed(self.waitUntil.split(':')))]))
-            d1 = d.replace(hour=h if h is not None else d.hour, minute=m if m is not None else d.minute, second=s if s is not None else d.second, microsecond=0)
+            h, m, s = list(
+                reversed(
+                    [
+                        int(x) if x is not None else None
+                        for _, x in zip_longest(range(3), reversed(self.waitUntil.split(':')))
+                    ]
+                )
+            )
+            d1 = d.replace(
+                hour=h if h is not None else d.hour,
+                minute=m if m is not None else d.minute,
+                second=s if s is not None else d.second,
+                microsecond=0,
+            )
             if d1 < d:
                 for x, extra in zip([s, m, h, None], [1, 60, 3600, 86400]):
                     if x is None:

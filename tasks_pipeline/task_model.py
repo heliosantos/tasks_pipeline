@@ -1,4 +1,3 @@
-
 class TaskModel:
     def __init__(self, name, task, taskIndex=None):
         self.task = task

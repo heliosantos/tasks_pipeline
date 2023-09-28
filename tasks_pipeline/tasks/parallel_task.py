@@ -4,7 +4,6 @@ from .task_status import TaskStatus
 
 
 class ParallelTask(BaseTask):
-
     def __init__(self, name, maxConcurrency=None, tasks=[]):
         super().__init__(name)
         self.maxConcurrency = maxConcurrency
@@ -19,7 +18,9 @@ class ParallelTask(BaseTask):
             async def f(coro):
                 async with semaphore:
                     return await coro
+
         else:
+
             async def f(coro):
                 return await coro
 
