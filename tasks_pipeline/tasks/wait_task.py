@@ -11,7 +11,7 @@ class WaitForTask(BaseTask):
         super().__init__(name)
         self.waitFor = waitFor
         if isinstance(waitFor, str | int):
-            waitFor = datetime.timedelta(seconds=int(waitFor))
+            self.waitFor = datetime.timedelta(seconds=int(waitFor))
 
     async def run(self):
         await super().run()
