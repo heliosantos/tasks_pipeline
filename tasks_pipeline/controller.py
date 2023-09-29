@@ -78,6 +78,10 @@ async def process_input(stdscr, model: TasksModel):
                         await enable_task(model.selectedTask)
                         model.selectedTaskText = ""
                         model.inputMode = InputMode.NONE
+                    if k.lower() == "s":
+                        asyncio.create_task(start_tasks(model.selectedTask))
+                        model.selectedTaskText = ""
+                        model.inputMode = InputMode.NONE
 
             model.hasUpdates = True
         await asyncio.sleep(0.1)
