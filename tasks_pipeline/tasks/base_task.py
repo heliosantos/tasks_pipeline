@@ -17,7 +17,7 @@ class BaseTask(object):
 
     async def cancel(self):
         for task in self.tasks:
-            task.cancel()
+            await task.cancel()
         self.status = TaskStatus.CANCELLED
         self.stopTime = datetime.datetime.now()
 

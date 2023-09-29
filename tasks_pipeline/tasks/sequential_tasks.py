@@ -12,6 +12,8 @@ class SequentialTask(BaseTask):
         for task in self.tasks:
             if task.status == TaskStatus.DISABLED:
                 continue
+            if task.status == TaskStatus.CANCELLED:
+                return
             await task.run()
             if task.status not in (TaskStatus.COMPLETED, TaskStatus.DISABLED):
                 await super().complete(TaskStatus.ERROR)

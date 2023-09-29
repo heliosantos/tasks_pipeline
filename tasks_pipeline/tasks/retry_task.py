@@ -20,6 +20,8 @@ class RetryTask(BaseTask):
             return
 
         for i in range(self.maxRetries):
+            if self.status == TaskStatus.CANCELLED:
+                return
             self.message = f"attempt {i + 1} out of {self.maxRetries}"
             await task.run()
             if task.status in (TaskStatus.COMPLETED, TaskStatus.DISABLED):

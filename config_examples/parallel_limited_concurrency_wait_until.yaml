@@ -1,0 +1,48 @@
+title: Example pipeline
+systemNotification: true
+
+rootTask:
+  type: ParallelTask
+  params:
+    maxConcurrency: 2
+  tasks:
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5
+    - type: WaitForTask
+      name: Wait
+      params:
+        waitFor: 5

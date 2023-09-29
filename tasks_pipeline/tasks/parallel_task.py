@@ -14,16 +14,20 @@ class ParallelTask(BaseTask):
         if self.maxConcurrency:
             semaphore = asyncio.Semaphore(self.maxConcurrency)
 
-            async def f(coro):
+            async def f(task):
                 async with semaphore:
-                    return await coro
+                    if self.status in (TaskStatus.DISABLED, TaskStatus.CANCELLED):
+                        return
+                    return await task.run()
 
         else:
 
-            async def f(coro):
-                return await coro
+            async def f(task):
+                return await task.run()
 
-        await asyncio.gather(*[f(task.run()) for task in self.tasks if task.status != TaskStatus.DISABLED])
+        await asyncio.gather(
+            *[f(task) for task in self.tasks if task.status not in (TaskStatus.DISABLED, TaskStatus.CANCELLED)]
+        )
 
         if any((task for task in self.tasks if task.status not in (TaskStatus.COMPLETED, TaskStatus.DISABLED))):
             await super().complete(TaskStatus.ERROR)
