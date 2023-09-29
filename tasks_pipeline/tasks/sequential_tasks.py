@@ -3,9 +3,8 @@ from .task_status import TaskStatus
 
 
 class SequentialTask(BaseTask):
-    def __init__(self, name, tasks=[]):
+    def __init__(self, name):
         super().__init__(name)
-        self.tasks = tasks
 
     async def run(self):
         await super().run()

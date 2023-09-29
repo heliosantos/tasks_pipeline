@@ -4,10 +4,9 @@ from .task_status import TaskStatus
 
 
 class ParallelTask(BaseTask):
-    def __init__(self, name, maxConcurrency=None, tasks=[]):
+    def __init__(self, name, maxConcurrency=None):
         super().__init__(name)
         self.maxConcurrency = maxConcurrency
-        self.tasks = tasks
 
     async def run(self):
         await super().run()
