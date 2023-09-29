@@ -36,6 +36,14 @@ async def enable_task(taskModel):
     tasks_apply(taskModel, f)
 
 
+async def cancel_task(taskModel):
+    def f(taskModel):
+        if taskModel.task.status == TaskStatus.RUNNING:
+            asyncio.create_task(taskModel.task.cancel())
+
+    tasks_apply(taskModel, f)
+
+
 async def process_input(stdscr, model: TasksModel):
     stdscr.nodelay(True)
 
@@ -81,6 +89,10 @@ async def process_input(stdscr, model: TasksModel):
                         model.inputMode = InputMode.NONE
                     if k.lower() == "s":
                         asyncio.create_task(start_tasks(model.selectedTask))
+                        model.selectedTaskText = ""
+                        model.inputMode = InputMode.NONE
+                    if k.lower() == "c":
+                        asyncio.create_task(cancel_task(model.selectedTask))
                         model.selectedTaskText = ""
                         model.inputMode = InputMode.NONE
 

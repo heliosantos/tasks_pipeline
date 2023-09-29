@@ -83,10 +83,17 @@ async def input_update(stdscr, model: TasksModel):
             case InputMode.NONE:
                 win.addstr("[S] Start, [X] exit")
             case InputMode.GET_TASK:
-                win.addstr(f"enter task index: {model.selectedTaskText}")
+                win.addstr(f"task index: {model.selectedTaskText}")
             case InputMode.GET_COMMAND:
-                text = f"task index: {model.selectedTask.taskIndex}   "
-                text = "[D] Disable" if model.selectedTask.task.status != TaskStatus.DISABLED else "[E] enable"
+                options = []
+                if model.selectedTask.task.status != TaskStatus.DISABLED:
+                    options.append("[D] Disable")
+                else:
+                    options.append("[E] enable")
+                if model.selectedTask.task.status == TaskStatus.RUNNING:
+                    options.append("[C] cancel")
+
+                text = "   ".join(options)
                 win.addstr(text)
 
         win.refresh()
