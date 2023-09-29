@@ -64,11 +64,16 @@ async def process_input(stdscr, model: TasksModel):
 
                 case InputMode.GET_TASK:
                     if k == "\n":
-                        model.selectTask(model.selectedTaskText)
-                        if model.selectedTask:
-                            model.inputMode = InputMode.GET_COMMAND
+                        if model.selectedTaskText.isnumeric():
+                            model.selectTask(model.selectedTaskText)
+                            if model.selectedTask:
+                                model.inputMode = InputMode.GET_COMMAND
+                            else:
+                                model.inputMode = InputMode.NONE
                         else:
                             model.inputMode = InputMode.NONE
+                    if ord(k) == 8:  # back
+                        model.selectedTaskText = model.selectedTaskText[:-1]
                     else:
                         model.selectedTaskText += k
 
