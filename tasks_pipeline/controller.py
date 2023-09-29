@@ -8,7 +8,7 @@ from .tasks_model import TasksModel, InputMode
 from .util import tasks_apply
 
 
-logger = logging.getLogger("tasks_pipeline.run_process_task")
+logger = logging.getLogger("tasks_pipeline.controller")
 
 
 async def disable_task(taskModel):
