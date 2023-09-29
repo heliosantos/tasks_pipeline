@@ -6,9 +6,15 @@ import logging
 from .tasks import TaskStatus
 from .tasks_model import TasksModel, InputMode
 from .util import tasks_apply
+from .view import notify
 
 
 logger = logging.getLogger("tasks_pipeline.controller")
+
+
+async def start_tasks(taskModel):
+    await taskModel.task.run()
+    notify("All tasks completed")
 
 
 async def disable_task(taskModel):
@@ -35,7 +41,7 @@ async def execute_command(model):
             await enable_task(model.selectedTask)
 
 
-async def process_input(stdscr, model: TasksModel, cancel_all_tasks, start_tasks):
+async def process_input(stdscr, model: TasksModel):
     stdscr.nodelay(True)
 
     model.inputMode = InputMode.NONE
@@ -52,7 +58,7 @@ async def process_input(stdscr, model: TasksModel, cancel_all_tasks, start_tasks
                         model.selectedTaskText = ""
                         model.commandText = ""
                     if k.lower() == "s":
-                        asyncio.create_task(start_tasks())
+                        asyncio.create_task(start_tasks(model.rootTask))
                     if k.lower() == "x":
                         return
 

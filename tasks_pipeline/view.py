@@ -1,8 +1,26 @@
 import asyncio
 import curses
 import datetime
+
+try:
+    import win11toast
+
+    toastAvailable = True
+except ModuleNotFoundError:
+    toastAvailable = False
+
 from .tasks import TaskStatus
 from .tasks_model import InputMode, TasksModel
+from .config import get_config
+
+
+def notify(message):
+    config = get_config()
+    if toastAvailable and config.get("systemNotification", True):
+        win11toast.notify(
+            config["title"],
+            message,
+        )
 
 
 def add_display_info(taskModel, level=0, parentPrefix="", lastChild=True):
