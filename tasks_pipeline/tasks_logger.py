@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 
 def setup_loggers(loggersConfig):
@@ -7,12 +8,14 @@ def setup_loggers(loggersConfig):
 
     defaultUseConsole = loggersConfig.get("console", False)
     defaultFile = loggersConfig.get("file")
+    defaultFile = datetime.datetime.now().strftime(defaultFile)
 
     for loggerName, loggerConfig in loggersConfig.get("loggers", {}).items():
         level = loggerConfig.get("level", "INFO")
         level = logging.getLevelName(level)
         useConsole = loggerConfig.get("console", defaultUseConsole)
         file = loggerConfig.get("file", defaultFile)
+        file = datetime.datetime.now().strftime(file)
 
         logger = logging.getLogger(loggerName)
         logger.setLevel(level)
