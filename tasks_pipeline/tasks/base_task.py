@@ -14,12 +14,15 @@ class BaseTask(object):
     async def run(self):
         self.status = TaskStatus.RUNNING
         self.startTime = datetime.datetime.now()
+        self.stopTime = None
 
     async def cancel(self):
         for task in self.tasks:
             await task.cancel()
         self.status = TaskStatus.CANCELLED
         self.stopTime = datetime.datetime.now()
+        if not self.startTime:
+            self.startTime = self.stopTime
 
     async def complete(self, status=TaskStatus.COMPLETED):
         self.status = status
