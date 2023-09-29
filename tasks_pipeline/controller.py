@@ -18,6 +18,8 @@ async def start_tasks(taskModel):
 
 
 async def disable_task(taskModel):
+    logger.info(f"disable task: {taskModel.taskIndex=}, {taskModel.name=}")
+
     def f(task):
         task.task.status = TaskStatus.DISABLED
 
@@ -25,20 +27,12 @@ async def disable_task(taskModel):
 
 
 async def enable_task(taskModel):
+    logger.info(f"enable task: {taskModel.taskIndex=}, {taskModel.name=}")
+
     def f(taskModel):
         taskModel.task.status = TaskStatus.NOT_STARTED
 
     tasks_apply(taskModel, f)
-
-
-async def execute_command(model):
-    logger.info(f"run command: {model.selectedTask.taskIndex=}, {model.commandText=}")
-    match model.commandText.lower():
-        case "disable":
-            await disable_task(model.selectedTask)
-    match model.commandText.lower():
-        case "enable":
-            await enable_task(model.selectedTask)
 
 
 async def process_input(stdscr, model: TasksModel):
@@ -46,7 +40,6 @@ async def process_input(stdscr, model: TasksModel):
 
     model.inputMode = InputMode.NONE
     model.selectedTaskText = ""
-    model.commandText = ""
 
     while True:
         with suppress(curses.error):
@@ -56,7 +49,6 @@ async def process_input(stdscr, model: TasksModel):
                     if k == ":":
                         model.inputMode = InputMode.GET_TASK
                         model.selectedTaskText = ""
-                        model.commandText = ""
                     if k.lower() == "s":
                         asyncio.create_task(start_tasks(model.rootTask))
                     if k.lower() == "x":
@@ -79,16 +71,12 @@ async def process_input(stdscr, model: TasksModel):
 
                 case InputMode.GET_COMMAND:
                     if k.lower() == "d":
-                        model.commandText = "disable"
-                        await execute_command(model)
+                        await disable_task(model.selectedTask)
                         model.selectedTaskText = ""
-                        model.commandText = ""
                         model.inputMode = InputMode.NONE
                     if k.lower() == "e":
-                        model.commandText = "enable"
-                        await execute_command(model)
+                        await enable_task(model.selectedTask)
                         model.selectedTaskText = ""
-                        model.commandText = ""
                         model.inputMode = InputMode.NONE
 
             model.hasUpdates = True

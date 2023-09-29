@@ -22,7 +22,7 @@ def setup_loggers(loggersConfig):
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
         if file:
-            fh = logging.FileHandler(file)
+            fh = logging.FileHandler(file, encoding="utf-8")
             fh.setLevel(level)
             fh.setFormatter(formatter)
             logger.addHandler(fh)

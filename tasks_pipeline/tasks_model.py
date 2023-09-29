@@ -17,7 +17,6 @@ class TasksModel:
         self.hasUpdates: bool = True
         self.selectedTask = None
         self.selectedTaskText = ""
-        self.commandText: str = ""
 
     def selectTask(self, key):
         matching = list(filter(lambda t: t.taskIndex == int(key), self.tasks))
