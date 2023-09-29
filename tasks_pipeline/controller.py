@@ -13,6 +13,7 @@ logger = logging.getLogger("tasks_pipeline.controller")
 
 
 async def start_tasks(taskModel):
+    logger.info(f"start task: {taskModel.taskIndex=}, {taskModel.name=}")
     await taskModel.task.run()
     notify("All tasks completed")
 
