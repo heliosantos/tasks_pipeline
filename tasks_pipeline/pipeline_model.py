@@ -9,7 +9,7 @@ class InputMode(Enum):
     GET_COMMAND = auto()
 
 
-class TasksModel:
+class PipelineModel:
     def __init__(self, rootTask):
         self.rootTask = rootTask
         self.tasks = flatten_tasks(rootTask)

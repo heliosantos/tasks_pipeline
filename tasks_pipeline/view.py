@@ -10,7 +10,7 @@ except ModuleNotFoundError:
     toastAvailable = False
 
 from .tasks import TaskStatus
-from .tasks_model import InputMode, TasksModel
+from .pipeline_model import InputMode, PipelineModel
 from .config import get_config
 
 
@@ -70,7 +70,7 @@ def get_color(r, g, b):
     return curses.color_pair(colorCounter)
 
 
-async def input_update(stdscr, model: TasksModel):
+async def input_update(stdscr, model: PipelineModel):
     width = curses.COLS
     win = curses.newwin(1, width - 1 - 3, 4 + len(model.tasks) + 1, 3)
 
@@ -100,7 +100,7 @@ async def input_update(stdscr, model: TasksModel):
         model.hasUpdates = False
 
 
-async def display(stdscr, model: TasksModel, title):
+async def display(stdscr, model: PipelineModel, title):
     add_display_info(model.rootTask)
 
     numLinesWidth = len(str(model.tasks[-1].taskIndex)) + 1

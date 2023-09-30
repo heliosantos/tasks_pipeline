@@ -6,7 +6,7 @@ import sys
 from .tasks_logger import setup_loggers
 from .view import display
 from .controller import process_input
-from .tasks_model import TasksModel
+from .pipeline_model import PipelineModel
 from .task_model import TaskModel
 from .config import load_config
 
@@ -65,7 +65,7 @@ async def main(stdscr):
 
     rootTaskModel = create_task_model(rootTask)
 
-    model = TasksModel(rootTaskModel)
+    model = PipelineModel(rootTaskModel)
 
     asyncio.create_task(display(stdscr, model, title))
     await process_input(stdscr, model)

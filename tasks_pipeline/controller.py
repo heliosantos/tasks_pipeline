@@ -4,7 +4,7 @@ import asyncio
 import logging
 
 from .tasks import TaskStatus
-from .tasks_model import TasksModel, InputMode
+from .pipeline_model import PipelineModel, InputMode
 from .util import tasks_apply
 from .view import notify
 
@@ -44,7 +44,7 @@ async def cancel_task(taskModel):
     tasks_apply(taskModel, f)
 
 
-async def process_input(stdscr, model: TasksModel):
+async def process_input(stdscr, model: PipelineModel):
     stdscr.nodelay(True)
 
     model.inputMode = InputMode.NONE
