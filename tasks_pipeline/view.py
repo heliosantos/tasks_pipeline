@@ -46,7 +46,11 @@ class ScreenRenderer:
             self.model = model
         self.maxy, self.maxx = self.stdscr.getmaxyx()
         if self.maxy < 6:
-            raise Exception('screen too smal. expected at least 6 lines')
+            win = self.lines[0]
+            win.clear()
+            win.addstr('The screen is too samll')
+            win.refresh()
+            return
         self.lines = [curses.newwin(1, self.maxx, i, 0) for i in range(self.maxy)]
         self._showTitle()
         self._updateScroll()
@@ -146,22 +150,20 @@ class ScreenRenderer:
     def _showOptions(self):
         numVisibleTasks = self._numVisibleTasks()
         win = self.lines[3 + numVisibleTasks + 1]
-
         win.clear()
+        options = []
         match self.model.inputMode:
             case InputMode.NONE:
-                options = [
-                    "[S] Start",
-                    "[X] exit",
-                ]
+                options.append("[S] Start")
+                options.append("[X] exit")
                 if numVisibleTasks < len(self.model.tasks):
                     options.append("[↑] scroll up")
                     options.append("[↓] scroll down")
-                win.addstr(','.join(options))
+
             case InputMode.GET_TASK:
-                win.addstr(f"task index: {self.model.selectedTaskText}")
+                options.append(f"task index: {self.model.selectedTaskText}")
+
             case InputMode.GET_COMMAND:
-                options = []
                 if self.model.selectedTask.task.status != TaskStatus.DISABLED:
                     options.append("[D] Disable")
                 else:
@@ -169,8 +171,7 @@ class ScreenRenderer:
                 if self.model.selectedTask.task.status == TaskStatus.RUNNING:
                     options.append("[C] cancel")
 
-                text = "   ".join(options)
-                win.addstr(text)
+        win.addstr('   '.join(options))
 
         win.refresh()
 
