@@ -14,6 +14,7 @@ class InputMode(Enum):
 class PipelineModel:
     def __init__(self, config):
         self.load_config(config)
+        self.scroll = 0
 
     def selectTask(self, key):
         matching = list(filter(lambda t: t.taskIndex == int(key), self.tasks))
@@ -32,6 +33,12 @@ class PipelineModel:
         self.hasUpdates: bool = True
         self.selectedTask = None
         self.selectedTaskText = ""
+
+    def scrollDown(self):
+        self.scroll = 1
+
+    def scrollUp(self):
+        self.scroll = -1
 
 
 def create_task_models(rootTask):

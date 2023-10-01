@@ -2,6 +2,7 @@ import asyncio
 import curses
 import datetime
 import math
+from statistics import median
 
 from .color_manager import ColorManager
 
@@ -24,6 +25,8 @@ class ScreenRenderer:
         self.init_colors()
         self.maxy = None
         self.maxx = None
+        self.taskStartIndex = 0
+        self.hasHiddentTasks = False
 
         self.update(model)
 
@@ -46,6 +49,7 @@ class ScreenRenderer:
             raise Exception('screen too smal. expected at least 6 lines')
         self.lines = [curses.newwin(1, self.maxx, i, 0) for i in range(self.maxy)]
         self._showTitle()
+        self._updateScroll()
         self._showTasks()
         self._showOptions()
 
@@ -63,10 +67,9 @@ class ScreenRenderer:
 
     def _showTasks(self):
         screenTaskStart = 3
-        taskStartIndex = 0
 
         numVisibleTasks = self._numVisibleTasks()
-        visibleTasks = self.model.tasks[taskStartIndex:taskStartIndex+numVisibleTasks]
+        visibleTasks = self.model.tasks[self.taskStartIndex:self.taskStartIndex+numVisibleTasks]
         taskWin = self.lines[screenTaskStart:screenTaskStart + numVisibleTasks]
 
         nameLen = min(max(len(t.displayPrefix + t.name) for t in self.model.tasks), 20)
@@ -147,7 +150,14 @@ class ScreenRenderer:
         win.clear()
         match self.model.inputMode:
             case InputMode.NONE:
-                win.addstr("[S] Start, [X] exit")
+                options = [
+                    "[S] Start",
+                    "[X] exit",
+                ]
+                if numVisibleTasks < len(self.model.tasks):
+                    options.append("[↑] scroll up")
+                    options.append("[↓] scroll down")
+                win.addstr(','.join(options))
             case InputMode.GET_TASK:
                 win.addstr(f"task index: {self.model.selectedTaskText}")
             case InputMode.GET_COMMAND:
@@ -163,6 +173,11 @@ class ScreenRenderer:
                 win.addstr(text)
 
         win.refresh()
+
+    def _updateScroll(self):
+        if self.model.scroll:
+            self.taskStartIndex = median([0, self.taskStartIndex + self.model.scroll, len(self.model.tasks) - self._numVisibleTasks()])
+            self.model.scroll = 0
 
 
 def notify(message):
