@@ -46,3 +46,6 @@ class ColorManager(object):
         if name:
             self.colorPairs[name] = cp
         return cp
+
+    def get(self, name):
+        return self.get_color(name=name)

@@ -24,6 +24,8 @@ class PipelineModel:
             self.config = config
 
         self.rootTask = create_task_models(self.config["rootTask"])
+        add_display_info(self.rootTask)
+
         self.tasks = flatten_tasks(self.rootTask)
         self.title = self.config.get('title', 'Tasks Pipeline')
         self.inputMode: InputMode = InputMode.NONE
@@ -68,3 +70,20 @@ def create_task_models(rootTask):
         return taskModel
 
     return create_task_model(rootTask)
+
+
+def add_display_info(taskModel, level=0, parentPrefix="", lastChild=True):
+    prefix = ""
+    childrenPrefix = ""
+    if level == 0:
+        prefix = ""
+        childrenPrefix = ""
+    else:
+        prefix = parentPrefix + ("└" if lastChild else "├")
+        childrenPrefix = parentPrefix + (" " if lastChild else "│")
+    taskModel.displayPrefix = prefix
+
+    if taskModel.subtasks:
+        lastChildIdx = len(taskModel.subtasks) - 1
+        for e, child in enumerate(taskModel.subtasks):
+            add_display_info(child, level + 1, childrenPrefix, e == lastChildIdx)
