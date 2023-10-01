@@ -87,28 +87,6 @@ def trim_text(text, maxLen):
     return text[: maxLen - 3] + "..."
 
 
-def scale_color(r, g, b):
-    f = (curses.COLORS - 1) / 255
-    rgb = (
-        min(round(r * f), curses.COLORS - 1),
-        min(round(g * f), curses.COLORS - 1),
-        min(round(b * f), curses.COLORS - 1),
-    )
-    return rgb
-
-
-colorCounter = 0
-
-
-def get_color(r, g, b):
-    global colorCounter
-    colorCounter += 1
-    r, g, b = scale_color(r, g, b)
-    curses.init_color(colorCounter, *scale_color(r, g, b))
-    curses.init_pair(colorCounter, colorCounter, -1)
-    return curses.color_pair(colorCounter)
-
-
 async def input_update(stdscr, model: PipelineModel):
     width = curses.COLS
     win = curses.newwin(1, width - 1 - 3, 4 + len(model.tasks) + 1, 3)
