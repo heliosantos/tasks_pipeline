@@ -25,6 +25,7 @@ class PipelineModel:
 
         self.rootTask = create_task_models(self.config["rootTask"])
         self.tasks = flatten_tasks(self.rootTask)
+        self.title = self.config.get('title', 'Tasks Pipeline')
         self.inputMode: InputMode = InputMode.NONE
         self.hasUpdates: bool = True
         self.selectedTask = None

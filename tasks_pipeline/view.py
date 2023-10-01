@@ -14,6 +14,45 @@ from .pipeline_model import InputMode, PipelineModel
 from .config import get_config
 
 
+class ScreenRenderer:
+    def __init__(self, stdscr, model: PipelineModel):
+        self.stdscr = stdscr
+        self.update(model)
+        self.maxy = None
+        self.maxx = None
+
+    def update(self, model: PipelineModel | None = None):
+        if model:
+            self.model = model
+        self.maxy, self.maxx = self.stdscr.getmaxyx()
+        if self.maxy < 5:
+            raise Exception('screen too smal. expected at least 5 lines')
+        self.lines = [curses.newwin(1, self.maxx, i, 0) for i in range(self.maxy)]
+        self._showTitle()
+        self._showTasks()
+
+    def _showTitle(self):
+        win = self.lines[0]
+        win.clear()
+        win.addstr(self.model.title)
+        win.refresh()
+
+    def _showTasks(self):
+        maxTasks = self.maxy - 4
+        screenTaskStart = 2
+        taskStartIndex = 0
+
+        numVisibleTasks = min(maxTasks, len(self.model.tasks))
+        visibleTasks = self.model.tasks[taskStartIndex:taskStartIndex+numVisibleTasks]
+        taskWin = self.lines[screenTaskStart:screenTaskStart + numVisibleTasks]
+        for win, task in zip(taskWin, visibleTasks):
+            win.addstr(task.name)
+            win.refresh()
+
+    def _showOptions(self):
+        pass
+
+
 def notify(message):
     config = get_config()
     if toastAvailable and config.get("systemNotification", True):
@@ -101,6 +140,12 @@ async def input_update(stdscr, model: PipelineModel):
 
 
 async def display(stdscr, model: PipelineModel, title):
+    
+    sr = ScreenRenderer(stdscr, model)
+    while True:
+        sr.update()
+        await asyncio.sleep(0.1)
+
     add_display_info(model.rootTask)
 
     numLinesWidth = len(str(model.tasks[-1].taskIndex)) + 1
