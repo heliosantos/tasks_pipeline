@@ -22,11 +22,9 @@ async def main(stdscr):
 
     setup_loggers(config.get("logging"))
 
-    title = config.setdefault("title", "Tasks Pipeline")
-
     pipelineModel = PipelineModel(config)
 
-    asyncio.create_task(display(stdscr, pipelineModel, title))
+    asyncio.create_task(display(stdscr, pipelineModel))
     await process_input(stdscr, pipelineModel)
 
     curses.nocbreak()

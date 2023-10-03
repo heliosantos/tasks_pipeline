@@ -31,13 +31,12 @@ class ScreenRenderer:
         self.update(model)
 
     def init_colors(self):
-        self.colors = {}
         self.colors = ColorManager.instance()
+        self.colors.get_color(255, 0, 0, "red")
         self.colors.get_color(240, 240, 240, "light grey")
         self.colors.get_color(192, 192, 192, "grey")
         self.colors.get_color(32, 32, 32, "dark grey")
         self.colors.get_color(0, 255, 0, "green")
-        self.colors.get_color(255, 0, 0, "red")
         self.colors.get_color(255, 165, 0, "orange")
         self.colors.get_color(240, 240, 240, "light")
 
@@ -113,7 +112,7 @@ class ScreenRenderer:
             if task.status == TaskStatus.RUNNING
             else self.colors.get("green")
             if task.status == TaskStatus.COMPLETED
-            else self.colors.get_color("red")
+            else self.colors.get("red")
         )
 
         win.clear()
@@ -202,7 +201,7 @@ def trim_text(text, maxLen):
     return text[: maxLen - 3] + "..."
 
 
-async def display(stdscr, model: PipelineModel, title):
+async def display(stdscr, model: PipelineModel):
     sr = ScreenRenderer(stdscr, model)
     while True:
         sr.update()
