@@ -28,7 +28,7 @@ class PipelineModel:
         add_display_info(self.rootTask)
 
         self.tasks = flatten_tasks(self.rootTask)
-        self.title = self.config.get('title', 'Tasks Pipeline')
+        self.title = self.config.get("title", "Tasks Pipeline")
         self.inputMode: InputMode = InputMode.NONE
         self.hasUpdates: bool = True
         self.selectedTask = None

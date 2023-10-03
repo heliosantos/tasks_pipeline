@@ -62,9 +62,9 @@ async def process_input(stdscr, model: PipelineModel):
                         asyncio.create_task(start_tasks(model.rootTask))
                     elif k.lower() == "x":
                         return
-                    elif k == 'KEY_DOWN':
+                    elif k == "KEY_DOWN":
                         model.scrollDown()
-                    elif k == 'KEY_UP':
+                    elif k == "KEY_UP":
                         model.scrollUp()
 
                 case InputMode.GET_TASK:
