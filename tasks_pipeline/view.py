@@ -118,6 +118,16 @@ class ScreenRenderer:
         win.clear()
 
         dp = taskModel.displayPrefix
+        disable = list(reversed(taskModel.get_ancestry_disabled_status()))
+
+        try:
+            index = disable.index(True)
+            dp1 = dp[:index]
+            dp2 = dp[index:]
+        except ValueError:
+            dp1 = dp
+            dp2 = ""
+
         fn = trim_text(dp + taskModel.name, nameLen).removeprefix(dp)
 
         columns = []
@@ -131,7 +141,8 @@ class ScreenRenderer:
             columns.append((str(taskModel.taskIndex).rjust(numLinesWidth) + " ", lineNumberColor))
         columns.extend(
             [
-                (dp, self.colors.get("grey")),
+                (dp1, self.colors.get("grey")),
+                (dp2, self.colors.get("dark grey")),
                 (fn + " ", taskColor),
                 (trim_text(str(elapsed).split(".")[0] + " ", elapsedLen), self.colors.get("light grey")),
                 (

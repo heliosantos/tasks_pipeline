@@ -68,6 +68,7 @@ def create_task_models(rootTask):
         taskModel = TaskModel(taskName, cls(taskName, **task.get("params", {})), taskIndex=taskIndex)
 
         if parentTaskModel:
+            taskModel.parentTask = parentTaskModel
             parentTaskModel.subtasks.append(taskModel)
             parentTaskModel.task.tasks.append(taskModel.task)
 
