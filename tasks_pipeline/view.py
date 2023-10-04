@@ -128,7 +128,7 @@ class ScreenRenderer:
                 if (self.model.selectedTask and taskModel.taskIndex == self.model.selectedTask.taskIndex)
                 else self.colors.get("light grey")
             )
-            columns.append((str(taskModel.taskIndex).rjust(numLinesWidth - 1) + " ", lineNumberColor))
+            columns.append((str(taskModel.taskIndex).rjust(numLinesWidth) + " ", lineNumberColor))
         columns.extend(
             [
                 (dp, self.colors.get("grey")),
