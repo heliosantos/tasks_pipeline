@@ -1,0 +1,21 @@
+[project]
+name = "tasks_pipeline"
+version = "1.0.0"
+authors = [
+    { name="Hélio Santos", email="heliosantos99@gmail.com" },
+]
+description = "A curses CLI tasks pipeline"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  'PyYAML',
+  'curses; platform_system == "Linux"',
+  'curses; platform_system == "Darwin"',
+  'windows-curses; platform_system == "Windows"',
+  'win11toast; platform_system == "Windows"'
+]
