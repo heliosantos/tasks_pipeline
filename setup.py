@@ -12,7 +12,7 @@ setup(
     author="Hélio Santos",
     author_email="heliosantos99@gmail.com",
     url="",
-    install_requires=["pyyaml"],
+    install_requires=["pyyaml", "windows-curses"],
     license=license,
     packages=find_packages(exclude=("tests", "docs")),
 )
