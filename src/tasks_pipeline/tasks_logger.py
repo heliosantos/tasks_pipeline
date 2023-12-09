@@ -3,26 +3,26 @@ import datetime
 
 
 def setup_loggers(loggersConfig):
-    if not loggersConfig or not loggersConfig.get("enabled", True):
+    if not loggersConfig or not loggersConfig.get('enabled', True):
         return
 
-    defaultUseConsole = loggersConfig.get("console", False)
-    defaultFile = loggersConfig.get("file")
+    defaultUseConsole = loggersConfig.get('console', False)
+    defaultFile = loggersConfig.get('file')
     defaultFile = datetime.datetime.now().strftime(defaultFile)
 
-    for loggerName, loggerConfig in loggersConfig.get("loggers", {}).items():
-        level = loggerConfig.get("level", "INFO")
+    for loggerName, loggerConfig in loggersConfig.get('loggers', {}).items():
+        level = loggerConfig.get('level', 'INFO')
         level = logging.getLevelName(level)
-        useConsole = loggerConfig.get("console", defaultUseConsole)
-        file = loggerConfig.get("file", defaultFile)
+        useConsole = loggerConfig.get('console', defaultUseConsole)
+        file = loggerConfig.get('file', defaultFile)
         file = datetime.datetime.now().strftime(file)
 
         logger = logging.getLogger(loggerName)
         logger.setLevel(level)
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
         if file:
-            fh = logging.FileHandler(file, encoding="utf-8")
+            fh = logging.FileHandler(file, encoding='utf-8')
             fh.setLevel(level)
             fh.setFormatter(formatter)
             logger.addHandler(fh)

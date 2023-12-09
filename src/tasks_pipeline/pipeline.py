@@ -11,7 +11,7 @@ from .config import load_config
 
 async def main(stdscr):
     if len(sys.argv) < 2:
-        print("usage: tasks_pipeline configFile")
+        print('usage: tasks_pipeline configFile')
         return
 
     curses.start_color()
@@ -20,7 +20,7 @@ async def main(stdscr):
 
     config = load_config(sys.argv[1])
 
-    setup_loggers(config.get("logging"))
+    setup_loggers(config.get('logging'))
 
     pipelineModel = PipelineModel(config)
 
@@ -41,5 +41,5 @@ def run():
     curses.wrapper(main_curses_wrapper)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run()

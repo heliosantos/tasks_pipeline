@@ -5,7 +5,7 @@ from .base_task import BaseTask
 from .task_status import TaskStatus
 
 
-logger = logging.getLogger("tasks_pipeline.port_connectivity_task")
+logger = logging.getLogger('tasks_pipeline.port_connectivity_task')
 
 
 class PortConnectivityTask(BaseTask):

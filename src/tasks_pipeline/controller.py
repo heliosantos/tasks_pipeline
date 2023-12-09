@@ -9,17 +9,17 @@ from .util import tasks_apply
 from .view import notify
 
 
-logger = logging.getLogger("tasks_pipeline.controller")
+logger = logging.getLogger('tasks_pipeline.controller')
 
 
 async def start_tasks(taskModel):
-    logger.info(f"start task: {taskModel.taskIndex=}, {taskModel.name=}")
+    logger.info(f'start task: {taskModel.taskIndex=}, {taskModel.name=}')
     await taskModel.task.run()
-    notify("All tasks completed")
+    notify('All tasks completed')
 
 
 async def disable_task(taskModel):
-    logger.info(f"disable task: {taskModel.taskIndex=}, {taskModel.name=}")
+    logger.info(f'disable task: {taskModel.taskIndex=}, {taskModel.name=}')
 
     def f(task):
         task.task.status = TaskStatus.DISABLED
@@ -28,7 +28,7 @@ async def disable_task(taskModel):
 
 
 async def enable_task(taskModel):
-    logger.info(f"enable task: {taskModel.taskIndex=}, {taskModel.name=}")
+    logger.info(f'enable task: {taskModel.taskIndex=}, {taskModel.name=}')
 
     def f(taskModel):
         taskModel.task.status = TaskStatus.NOT_STARTED
@@ -48,27 +48,27 @@ async def process_input(stdscr, model: PipelineModel):
     stdscr.nodelay(True)
 
     model.inputMode = InputMode.NONE
-    model.selectedTaskText = ""
+    model.selectedTaskText = ''
 
     while True:
         with suppress(curses.error):
             k = stdscr.getkey()
             match model.inputMode:
                 case InputMode.NONE:
-                    if k == ":":
+                    if k == ':':
                         model.inputMode = InputMode.GET_TASK
-                        model.selectedTaskText = ""
-                    elif k.lower() == "s":
+                        model.selectedTaskText = ''
+                    elif k.lower() == 's':
                         asyncio.create_task(start_tasks(model.rootTask))
-                    elif k.lower() == "x":
+                    elif k.lower() == 'x':
                         return
-                    elif k == "KEY_DOWN":
+                    elif k == 'KEY_DOWN':
                         model.scrollDown()
-                    elif k == "KEY_UP":
+                    elif k == 'KEY_UP':
                         model.scrollUp()
 
                 case InputMode.GET_TASK:
-                    if k == "\n":
+                    if k == '\n':
                         if model.selectedTaskText.isnumeric():
                             model.selectTask(model.selectedTaskText)
                             if model.selectedTask:
@@ -83,21 +83,21 @@ async def process_input(stdscr, model: PipelineModel):
                         model.selectedTaskText += k
 
                 case InputMode.GET_COMMAND:
-                    if k.lower() == "d":
+                    if k.lower() == 'd':
                         await disable_task(model.selectedTask)
-                        model.selectedTaskText = ""
+                        model.selectedTaskText = ''
                         model.inputMode = InputMode.NONE
-                    if k.lower() == "e":
+                    if k.lower() == 'e':
                         await enable_task(model.selectedTask)
-                        model.selectedTaskText = ""
+                        model.selectedTaskText = ''
                         model.inputMode = InputMode.NONE
-                    if k.lower() == "s":
+                    if k.lower() == 's':
                         asyncio.create_task(start_tasks(model.selectedTask))
-                        model.selectedTaskText = ""
+                        model.selectedTaskText = ''
                         model.inputMode = InputMode.NONE
-                    if k.lower() == "c":
+                    if k.lower() == 'c':
                         asyncio.create_task(cancel_task(model.selectedTask))
-                        model.selectedTaskText = ""
+                        model.selectedTaskText = ''
                         model.inputMode = InputMode.NONE
 
             model.hasUpdates = True

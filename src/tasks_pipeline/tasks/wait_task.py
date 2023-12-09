@@ -22,7 +22,7 @@ class WaitForTask(BaseTask):
             if self.status == TaskStatus.CANCELLED:
                 break
             elapsed = waitUntil - datetime.datetime.now()
-            self.message = "remaining: " + str(elapsed).split(".")[0]
+            self.message = 'remaining: ' + str(elapsed).split('.')[0]
             await asyncio.sleep(0.1)
         else:
             await super().complete()
@@ -45,7 +45,7 @@ class WaitUntilTask(BaseTask):
                 reversed(
                     [
                         int(x) if x is not None else None
-                        for _, x in zip_longest(range(3), reversed(self.waitUntil.split(":")))
+                        for _, x in zip_longest(range(3), reversed(self.waitUntil.split(':')))
                     ]
                 )
             )
@@ -66,7 +66,7 @@ class WaitUntilTask(BaseTask):
             if self.status == TaskStatus.CANCELLED:
                 break
             elapsed = self.waitUntil - datetime.datetime.now()
-            self.message = "remaining: " + str(elapsed).split(".")[0]
+            self.message = 'remaining: ' + str(elapsed).split('.')[0]
             await asyncio.sleep(0.1)
         else:
             await super().complete()

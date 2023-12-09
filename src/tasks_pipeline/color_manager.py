@@ -5,7 +5,7 @@ class ColorManager(object):
     _instance = None
 
     def __init__(self):
-        raise RuntimeError("Call instance() instead")
+        raise RuntimeError('Call instance() instead')
 
     @classmethod
     def instance(cls):
@@ -34,7 +34,7 @@ class ColorManager(object):
             return cp
 
         if r is None or g is None or b is None:
-            raise TypeError("r, g, b must have values from 0 to 255")
+            raise TypeError('r, g, b must have values from 0 to 255')
 
         self.colorCounter += 1
         r, g, b = self._scale_color(r, g, b)

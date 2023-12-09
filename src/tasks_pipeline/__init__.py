@@ -8,5 +8,14 @@ from .tasks import RunProcessTask
 from .tasks import RetryTask
 from .tasks import PortConnectivityTask
 
-__all__ = ['BaseTask', 'TaskStatus', 'WaitUntilTask', 'WaitForTask', 'ParallelTask', 'SequentialTask', 'RunProcessTask', 'RetryTask', 'PortConnectivityTask']
-
+__all__ = [
+    'BaseTask',
+    'TaskStatus',
+    'WaitUntilTask',
+    'WaitForTask',
+    'ParallelTask',
+    'SequentialTask',
+    'RunProcessTask',
+    'RetryTask',
+    'PortConnectivityTask',
+]

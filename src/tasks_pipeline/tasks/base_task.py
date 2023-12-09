@@ -6,7 +6,7 @@ class BaseTask(object):
     def __init__(self, name):
         self.name = name
         self.status = TaskStatus.NOT_STARTED
-        self.message = ""
+        self.message = ''
         self.startTime = None
         self.stopTime = None
         self.tasks = []

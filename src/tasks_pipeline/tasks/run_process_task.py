@@ -6,14 +6,14 @@ from .base_task import BaseTask
 from .task_status import TaskStatus
 
 
-logger = logging.getLogger("tasks_pipeline.run_process_task")
+logger = logging.getLogger('tasks_pipeline.run_process_task')
 
 
 class RunProcessTask(BaseTask):
     def __init__(self, name, cmd=None, expectedOutput=None):
         super().__init__(name)
         if not cmd:
-            raise TypeError("cmd expected 1 argument, got 0")
+            raise TypeError('cmd expected 1 argument, got 0')
         self.cmd = cmd
         self.expectedOutput = expectedOutput
         logger.debug(self.expectedOutput)
@@ -34,17 +34,17 @@ class RunProcessTask(BaseTask):
             logger.error(stderr.decode())
 
         if stderr:
-            self.message = stderr.decode().replace("\r", "").replace("\n", " ")
+            self.message = stderr.decode().replace('\r', '').replace('\n', ' ')
             await super().complete(TaskStatus.ERROR)
             return
 
         if self.expectedOutput and not stdout:
-            self.message = "no output"
+            self.message = 'no output'
             await super().complete(TaskStatus.ERROR)
             return
 
         if self.expectedOutput and not re.search(self.expectedOutput, stdout.decode().strip()):
-            self.message = "unexpected output"
+            self.message = 'unexpected output'
             logger.error(stdout.decode())
             await super().complete(TaskStatus.ERROR)
             return

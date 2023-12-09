@@ -32,13 +32,13 @@ class ScreenRenderer:
 
     def init_colors(self):
         self.colors = ColorManager.instance()
-        self.colors.get_color(255, 0, 0, "red")
-        self.colors.get_color(240, 240, 240, "light grey")
-        self.colors.get_color(192, 192, 192, "grey")
-        self.colors.get_color(32, 32, 32, "dark grey")
-        self.colors.get_color(0, 255, 0, "green")
-        self.colors.get_color(255, 165, 0, "orange")
-        self.colors.get_color(240, 240, 240, "light")
+        self.colors.get_color(255, 0, 0, 'red')
+        self.colors.get_color(240, 240, 240, 'light grey')
+        self.colors.get_color(192, 192, 192, 'grey')
+        self.colors.get_color(32, 32, 32, 'dark grey')
+        self.colors.get_color(0, 255, 0, 'green')
+        self.colors.get_color(255, 165, 0, 'orange')
+        self.colors.get_color(240, 240, 240, 'light')
 
     def update(self, model: PipelineModel | None = None):
         if model:
@@ -47,7 +47,7 @@ class ScreenRenderer:
         if self.maxy < 6:
             win = self.lines[0]
             win.clear()
-            win.addstr("The screen is too samll")
+            win.addstr('The screen is too samll')
             win.refresh()
             return
         self.lines = [curses.newwin(1, self.maxx, i, 0) for i in range(self.maxy)]
@@ -57,7 +57,7 @@ class ScreenRenderer:
         self._showOptions()
 
     def _showTitle(self):
-        color = self.colors.get("grey")
+        color = self.colors.get('grey')
 
         win = self.lines[0]
         win.clear()
@@ -84,14 +84,14 @@ class ScreenRenderer:
         numLinesWidth = (int(math.log10(visibleTasks[-1].taskIndex + 1)) + 1) if showNumbers else 0
 
         self.lines[2].addstr(
-            " " * (numLinesWidth + 1 if numLinesWidth else 0)
-            + trim_text("Task", nameLen)
-            + " "
-            + trim_text("Elapsed", elapsedLen)
-            + " "
-            + trim_text("Status", statusLen)
-            + " "
-            + trim_text("Message", msgLen),
+            ' ' * (numLinesWidth + 1 if numLinesWidth else 0)
+            + trim_text('Task', nameLen)
+            + ' '
+            + trim_text('Elapsed', elapsedLen)
+            + ' '
+            + trim_text('Status', statusLen)
+            + ' '
+            + trim_text('Message', msgLen),
         )
         self.lines[2].refresh()
 
@@ -104,15 +104,15 @@ class ScreenRenderer:
         elapsed = (task.stopTime or now) - (task.startTime or now)
 
         taskColor = (
-            self.colors.get("grey")
+            self.colors.get('grey')
             if task.status == TaskStatus.NOT_STARTED
-            else self.colors.get("dark grey")
+            else self.colors.get('dark grey')
             if task.status == TaskStatus.DISABLED
-            else self.colors.get("light grey")
+            else self.colors.get('light grey')
             if task.status == TaskStatus.RUNNING
-            else self.colors.get("green")
+            else self.colors.get('green')
             if task.status == TaskStatus.COMPLETED
-            else self.colors.get("red")
+            else self.colors.get('red')
         )
 
         win.clear()
@@ -126,7 +126,7 @@ class ScreenRenderer:
             dp2 = dp[index:]
         except ValueError:
             dp1 = dp
-            dp2 = ""
+            dp2 = ''
 
         fn = trim_text(dp + taskModel.name, nameLen).removeprefix(dp)
 
@@ -134,24 +134,24 @@ class ScreenRenderer:
 
         if numLinesWidth > 0:
             lineNumberColor = (
-                self.colors.get("orange")
+                self.colors.get('orange')
                 if (self.model.selectedTask and taskModel.taskIndex == self.model.selectedTask.taskIndex)
-                else self.colors.get("light grey")
+                else self.colors.get('light grey')
             )
-            columns.append((str(taskModel.taskIndex).rjust(numLinesWidth) + " ", lineNumberColor))
+            columns.append((str(taskModel.taskIndex).rjust(numLinesWidth) + ' ', lineNumberColor))
         columns.extend(
             [
-                (dp1, self.colors.get("grey")),
-                (dp2, self.colors.get("dark grey")),
-                (fn + " ", taskColor),
-                (trim_text(str(elapsed).split(".")[0] + " ", elapsedLen), self.colors.get("light grey")),
+                (dp1, self.colors.get('grey')),
+                (dp2, self.colors.get('dark grey')),
+                (fn + ' ', taskColor),
+                (trim_text(str(elapsed).split('.')[0] + ' ', elapsedLen), self.colors.get('light grey')),
                 (
-                    trim_text(task.status.name.replace("NOT_STARTED", "").replace("DISABLED", "") + " ", statusLen),
-                    self.colors.get("orange"),
+                    trim_text(task.status.name.replace('NOT_STARTED', '').replace('DISABLED', '') + ' ', statusLen),
+                    self.colors.get('orange'),
                 ),
                 (
-                    trim_text(task.message + " ", (msgLen - numLinesWidth) if numLinesWidth > 0 else msgLen),
-                    self.colors.get("light grey"),
+                    trim_text(task.message + ' ', (msgLen - numLinesWidth) if numLinesWidth > 0 else msgLen),
+                    self.colors.get('light grey'),
                 ),
             ]
         )
@@ -167,24 +167,24 @@ class ScreenRenderer:
         options = []
         match self.model.inputMode:
             case InputMode.NONE:
-                options.append("[S] Start")
-                options.append("[X] exit")
+                options.append('[S] Start')
+                options.append('[X] exit')
                 if numVisibleTasks < len(self.model.tasks):
-                    options.append("[↑] scroll up")
-                    options.append("[↓] scroll down")
+                    options.append('[↑] scroll up')
+                    options.append('[↓] scroll down')
 
             case InputMode.GET_TASK:
-                options.append(f"task index: {self.model.selectedTaskText}")
+                options.append(f'task index: {self.model.selectedTaskText}')
 
             case InputMode.GET_COMMAND:
                 if self.model.selectedTask.task.status != TaskStatus.DISABLED:
-                    options.append("[D] Disable")
+                    options.append('[D] Disable')
                 else:
-                    options.append("[E] enable")
+                    options.append('[E] enable')
                 if self.model.selectedTask.task.status == TaskStatus.RUNNING:
-                    options.append("[C] cancel")
+                    options.append('[C] cancel')
 
-        win.addstr("   ".join(options))
+        win.addstr('   '.join(options))
 
         win.refresh()
 
@@ -198,9 +198,9 @@ class ScreenRenderer:
 
 def notify(message):
     config = get_config()
-    if toastAvailable and config.get("systemNotification", True):
+    if toastAvailable and config.get('systemNotification', True):
         win11toast.notify(
-            config["title"],
+            config['title'],
             message,
         )
 
@@ -209,7 +209,7 @@ def trim_text(text, maxLen):
     text = text.ljust(maxLen)
     if len(text) <= maxLen:
         return text
-    return text[: maxLen - 3] + "..."
+    return text[: maxLen - 3] + '...'
 
 
 async def display(stdscr, model: PipelineModel):
