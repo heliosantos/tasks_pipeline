@@ -1,0 +1,8 @@
+title: Example pipeline
+systemNotification: true
+rootTask:
+    type: PortConnectivityTask
+    params:
+      hosts:
+        - localhost:80
+        - 127.0.0.1:80
