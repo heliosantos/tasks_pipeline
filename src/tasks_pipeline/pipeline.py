@@ -7,6 +7,7 @@ from .view import display
 from .controller import process_input
 from .pipeline_model import PipelineModel
 from .config import load_config
+from .curses_fix import mywrapper
 
 
 async def main(stdscr):
@@ -33,13 +34,10 @@ async def main(stdscr):
     curses.endwin()
 
 
-def main_curses_wrapper(stdscr):
+@mywrapper
+def run_event_loop(stdscr):
     asyncio.run(main(stdscr))
 
 
-def run():
-    curses.wrapper(main_curses_wrapper)
-
-
 if __name__ == '__main__':
-    run()
+    run_event_loop()

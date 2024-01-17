@@ -1,6 +1,4 @@
-import asyncio
-
-from .pipeline import run
+from .pipeline import run_event_loop
 
 
-run()
+run_event_loop()
