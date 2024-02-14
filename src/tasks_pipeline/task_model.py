@@ -2,7 +2,9 @@ from .tasks import TaskStatus
 
 
 class TaskModel:
-    def __init__(self, name, task, taskIndex=None):
+    def __init__(self, name, task, taskIndex=None, disabled=False):
+        if disabled:
+            task.status = TaskStatus.DISABLED
         self.task = task
         self.parentTask = None
         self.subtasks = []

@@ -50,7 +50,7 @@ def create_task_models(rootTask):
         'RetryTask': '↻',
     }
 
-    def create_task_model(task, parentTaskModel=None):
+    def create_task_model(task, parentTaskModel=None, disabled=None):
         nonlocal taskIndex
         taskIndex += 1
         t = task['type']
@@ -62,10 +62,15 @@ def create_task_models(rootTask):
         cls = getattr(mod, cls)
 
         taskName = task.get('name', '')
+        if disabled is None:
+            disabled = task.get('disabled', False)
+        else:
+            disabled = False
+
         if defaultName := defaultNames.get(task['type'], ''):
             taskName = f'{defaultName} {taskName}'
 
-        taskModel = TaskModel(taskName, cls(taskName, **task.get('params', {})), taskIndex=taskIndex)
+        taskModel = TaskModel(taskName, cls(taskName, **task.get('params', {})), taskIndex=taskIndex, disabled=disabled)
 
         if parentTaskModel:
             taskModel.parentTask = parentTaskModel
